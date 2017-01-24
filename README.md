@@ -42,7 +42,7 @@ Installation
 
 Alternatively, you may install the SDK from the github repo:
 
-    git clone https://www.github.com/
+    git clone https://www.github.com/smartwaivercom/php-sdk
 
 Getting Started
 ==========
