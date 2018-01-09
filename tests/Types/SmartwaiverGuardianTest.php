@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -19,7 +19,6 @@ namespace Smartwaiver\Tests;
 
 use InvalidArgumentException;
 use Smartwaiver\Tests\Factories\SmartwaiverTypes;
-use Smartwaiver\Types\SmartwaiverCustomField;
 use Smartwaiver\Types\SmartwaiverGuardian;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -15,7 +15,7 @@
  * under the License.
  */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../autoload.php';
 
 use Smartwaiver\Smartwaiver;
 
@@ -50,6 +50,10 @@ echo 'Tags:' . PHP_EOL;
 foreach($waiver->tags as $tag) {
     echo '    ' . $tag . PHP_EOL;
 }
+echo 'Flags: (Display Text, Reason)' . PHP_EOL;
+foreach ($waiver->flags as $flag) {
+    echo '    ' . $flag->displayText . ', ' . $flag->reason . PHP_EOL;
+}
 echo 'Participants:' . PHP_EOL;
 foreach ($waiver->participants as $index => $participant) {
     echo '    Participant ' . $index . ':'
@@ -65,6 +69,10 @@ foreach ($waiver->participants as $index => $participant) {
         echo '            ' . $guid . ', '
             . $customParticipantField->displayText
             . ', ' . $customParticipantField->value . PHP_EOL;
+    }
+    echo '        Flags: (Display Text, Reason)' . PHP_EOL;
+    foreach ($waiver->flags as $flag) {
+        echo '            ' . $flag->displayText . ', ' . $flag->reason . PHP_EOL;
     }
 }
 echo 'Custom Waiver Fields: (GUID, Display Text, Value)' . PHP_EOL;
@@ -97,4 +105,5 @@ echo 'Insurance Policy Number: ' . $waiver->insurancePolicyNumber . PHP_EOL;
 echo 'Drivers License Number: ' . $waiver->driversLicenseNumber . PHP_EOL;
 echo 'Drivers License State: ' . $waiver->driversLicenseState . PHP_EOL;
 echo 'Client IP: ' . $waiver->clientIP . PHP_EOL;
+echo 'Number of Photos: ' . $waiver->photos . PHP_EOL;
 echo 'PDF: ' . $waiver->pdf . PHP_EOL;

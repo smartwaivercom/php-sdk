@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -19,6 +19,7 @@ namespace Smartwaiver\Tests;
 
 use InvalidArgumentException;
 use Smartwaiver\Tests\Factories\SmartwaiverTypes;
+use Smartwaiver\Types\SmartwaiverFlag;
 use Smartwaiver\Types\SmartwaiverWaiverSummary;
 
 /**
@@ -64,5 +65,10 @@ class SmartwaiverWaiverSummaryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($waiver['dob'], $swWaiverSummary->dob);
         $this->assertEquals($waiver['isMinor'], $swWaiverSummary->isMinor);
         $this->assertEquals($waiver['tags'], $swWaiverSummary->tags);
+
+        $this->assertCount(count($waiver['flags']), $swWaiverSummary->flags);
+        foreach($swWaiverSummary->flags as $flag) {
+            $this->assertInstanceOf(SmartwaiverFlag::class, $flag);
+        }
     }
 }

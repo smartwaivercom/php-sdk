@@ -19,14 +19,15 @@ namespace Smartwaiver\Tests;
 
 use InvalidArgumentException;
 use Smartwaiver\Tests\Factories\SmartwaiverTypes;
-use Smartwaiver\Types\SmartwaiverWebhook;
+use Smartwaiver\Types\SmartwaiverPhoto;
+use Smartwaiver\Types\SmartwaiverPhotos;
 
 /**
- * Class SmartwaiverWebhookTest
+ * Class SmartwaiverPhotosTest
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverPhotosTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test whether a required keys error is generated correctly
@@ -34,12 +35,12 @@ class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
     public function testRequiredKeys()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot create a SmartwaiverWebhook with missing field: endpoint');
+        $this->expectExceptionMessage('Cannot create a SmartwaiverPhotos with missing field: waiverId');
 
-        $webhook = SmartwaiverTypes::createParticipant();
-        unset($webhook['endpoint']);
+        $photos = SmartwaiverTypes::createPhotos();
+        unset($photos['waiverId']);
 
-        $swWebhook = new SmartwaiverWebhook($webhook);
+        $swPhotos = new SmartwaiverPhotos($photos);
     }
 
     /**
@@ -47,10 +48,17 @@ class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
      */
     public function testSuccess()
     {
-        $webhook = SmartwaiverTypes::createWebhook();
-        $swWebhook = new SmartwaiverWebhook($webhook);
+        $photos = SmartwaiverTypes::createPhotos();
+        $swPhotos = new SmartwaiverPhotos($photos);
 
-        $this->assertEquals($webhook['endpoint'], $swWebhook->endpoint);
-        $this->assertEquals($webhook['emailValidationRequired'], $swWebhook->emailValidationRequired);
+        $this->assertEquals($photos['waiverId'], $swPhotos->waiverId);
+        $this->assertEquals($photos['templateId'], $swPhotos->templateId);
+        $this->assertEquals($photos['title'], $swPhotos->title);
+        $this->assertEquals($photos['createdOn'], $swPhotos->createdOn);
+
+        $this->assertCount(count($photos['photos']), $swPhotos->photos);
+        foreach($swPhotos->photos as $photo) {
+            $this->assertInstanceOf(SmartwaiverPhoto::class, $photo);
+        }
     }
 }

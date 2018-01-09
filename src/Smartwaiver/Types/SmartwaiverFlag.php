@@ -18,35 +18,35 @@
 namespace Smartwaiver\Types;
 
 /**
- * Class SmartwaiverCustomField
+ * Class SmartwaiverFlag
  *
- * This class represents a custom field inside of a signed waiver.
+ * This class represents a flag on a signed waiver.
  *
  * @package Smartwaiver\Types
  */
-class SmartwaiverCustomField extends SmartwaiverType
+class SmartwaiverFlag extends SmartwaiverType
 {
     /**
      * The required fields in the constructor array to create this object
      */
     const REQUIRED_KEYS = [
-        'value',
-        'displayText'
+        'displayText',
+        'reason'
     ];
 
     /**
-     * @var string The value of the custom waiver field
-     */
-    public $value;
-
-    /**
-     * @var string The display text of the custom waiver field
+     * @var string The display text of the flagged field
      */
     public $displayText;
 
     /**
-     * Create a SmartwaiverCustomField object by providing an array with all
-     * the required keys. See REQUIRED_KEYS for that information.
+     * @var string The reason the field was flagged
+     */
+    public $reason;
+
+    /**
+     * Create a SmartwaiverFlag object by providing an array with all the
+     * required keys. See REQUIRED_KEYS for that information.
      *
      * @param array $field  The input array containing all the information
      *
@@ -58,7 +58,7 @@ class SmartwaiverCustomField extends SmartwaiverType
         parent::__construct($field, self::REQUIRED_KEYS, self::class);
 
         // Load all the information into public variables
-        $this->value = $field['value'];
         $this->displayText = $field['displayText'];
+        $this->reason = $field['reason'];
     }
 }

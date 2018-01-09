@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -20,6 +20,7 @@ namespace Smartwaiver\Tests;
 use InvalidArgumentException;
 use Smartwaiver\Tests\Factories\SmartwaiverTypes;
 use Smartwaiver\Types\SmartwaiverCustomField;
+use Smartwaiver\Types\SmartwaiverFlag;
 use Smartwaiver\Types\SmartwaiverGuardian;
 use Smartwaiver\Types\SmartwaiverParticipant;
 use Smartwaiver\Types\SmartwaiverWaiver;
@@ -69,9 +70,14 @@ class SmartwaiverWaiverTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($waiver['clientIP'], $swWaiver->clientIP);
         $this->assertEquals($waiver['tags'], $swWaiver->tags);
 
+        $this->assertCount(count($waiver['flags']), $swWaiver->flags);
+        foreach($swWaiver->flags as $flag) {
+            $this->assertInstanceOf(SmartwaiverFlag::class, $flag);
+        }
+
         $this->assertCount(count($waiver['participants']), $swWaiver->participants);
-        foreach($swWaiver->participants as $participant) {
-            $this->assertInstanceOf(SmartwaiverParticipant::class, $participant);
+        foreach($swWaiver->participants as $flag) {
+            $this->assertInstanceOf(SmartwaiverParticipant::class, $flag);
         }
 
         $this->assertEquals($waiver['email'], $swWaiver->email);
@@ -96,6 +102,7 @@ class SmartwaiverWaiverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(SmartwaiverGuardian::class, $swWaiver->guardian);
         $this->assertEquals($waiver['pdf'], $swWaiver->pdf);
+        $this->assertEquals($waiver['photos'], $swWaiver->photos);
     }
 
     /**
@@ -122,6 +129,20 @@ class SmartwaiverWaiverTest extends \PHPUnit_Framework_TestCase
 
         $waiver = SmartwaiverTypes::createWaiver();
         $waiver['participants'] = [];
+
+        $swWaiver = new SmartwaiverWaiver($waiver);
+    }
+
+    /**
+     * Test that flags not being an array throws an exception
+     */
+    public function testFlagsIsNotArray()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Flags field must be an array');
+
+        $waiver = SmartwaiverTypes::createWaiver();
+        $waiver['flags'] = '';
 
         $swWaiver = new SmartwaiverWaiver($waiver);
     }

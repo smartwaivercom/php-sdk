@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -64,6 +64,9 @@ class SmartwaiverTypes
             'isMinor' => true,
             'tags' => [
                 'Green Team'
+            ],
+            'flags' => [
+                SmartwaiverTypes::createFlag()
             ]
         ];
     }
@@ -97,6 +100,7 @@ class SmartwaiverTypes
         ];
         $waiver['guardian']  = SmartwaiverTypes::createGuardian();
         $waiver['pdf'] = '';
+        $waiver['photos'] = 0;
         return $waiver;
     }
 
@@ -120,7 +124,45 @@ class SmartwaiverTypes
             ],
             'customParticipantFields' => [
                 'w5qe9kkh3bxpe' => SmartwaiverTypes::createCustomField()
+            ],
+            'flags' => [
+                SmartwaiverTypes::createFlag()
             ]
+        ];
+    }
+
+    /**
+     * Create an input array for a SmartwaiverPhotos object
+     *
+     * @return array
+     */
+    public static function createPhotos()
+    {
+        return [
+            'waiverId' => '6jebdfxzvrdkd',
+            'templateId' => 'sprswrvh2keeh',
+            'title' => 'Demo Waiver',
+            'createdOn' => '2017-01-24 13:12:29',
+            'photos' => [
+                SmartwaiverTypes::createPhoto()
+            ]
+        ];
+    }
+
+    /**
+     * Create an input array for a SmartwaiverPhoto object
+     *
+     * @return array
+     */
+    public static function createPhoto()
+    {
+        return [
+            'type' => 'kiosk',
+            'date' => '2017-01-24 13:12:29',
+            'tag' => 'IP: 192.168.2.0',
+            'fileType' => 'jpg',
+            'photoId' => 'CwLeDjffgDoGHua',
+            'photo' => 'BASE64 ENCODED PHOTO',
         ];
     }
 
@@ -151,7 +193,20 @@ class SmartwaiverTypes
     }
 
     /**
-     * Create an inpute array for a SmartwaiverGuardian object
+     * Create an input array for a SmartwaiverFlag object
+     *
+     * @return array
+     */
+    public static function createFlag()
+    {
+        return [
+            'displayText' => 'Are you ready to have fun?',
+            'reason' => 'was not selected'
+        ];
+    }
+
+    /**
+     * Create an input array for a SmartwaiverGuardian object
      *
      * @return array
      */
@@ -163,6 +218,21 @@ class SmartwaiverTypes
             'lastName' => 'Smith',
             'phone' => '111-111-1111',
             'relationship' => 'Mother'
+        ];
+    }
+
+    /**
+     * Create an input array for a SmartwaiverSearch object
+     *
+     * @return array
+     */
+    public static function createSearch()
+    {
+        return [
+            'guid' => 'a0256461ca244278b412ab3238f5efd2',
+            'count' => 563,
+            'pages' => 5,
+            'pageSize' => 100
         ];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -20,6 +20,7 @@ namespace Smartwaiver\Tests;
 use GuzzleHttp\Psr7\Response;
 
 use Smartwaiver\Exceptions\SmartwaiverHTTPException;
+use Smartwaiver\Exceptions\SmartwaiverRateLimitException;
 use Smartwaiver\Exceptions\SmartwaiverSDKException;
 use Smartwaiver\SmartwaiverResponse;
 use Smartwaiver\Tests\Factories\APIErrorResponses;
@@ -170,6 +171,19 @@ class SmartwaiverResponseTest extends \PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('Invalid parameter');
 
         $response = new Response(400, [], APIErrorResponses::parameter());
+        $swResponse = new SmartwaiverResponse($response);
+    }
+
+    /**
+     * Test that HTTP errors are properly thrown
+     */
+    public function testRateLimitExceptions()
+    {
+        $this->expectException(SmartwaiverRateLimitException::class);
+        $this->expectExceptionCode(429);
+        $this->expectExceptionMessage('Retry After 14 seconds...');
+
+        $response = new Response(429, [], APIErrorResponses::rateLimit());
         $swResponse = new SmartwaiverResponse($response);
     }
 

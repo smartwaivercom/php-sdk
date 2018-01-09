@@ -19,14 +19,15 @@ namespace Smartwaiver\Tests;
 
 use InvalidArgumentException;
 use Smartwaiver\Tests\Factories\SmartwaiverTypes;
-use Smartwaiver\Types\SmartwaiverWebhook;
+use Smartwaiver\Types\SmartwaiverCustomField;
+use Smartwaiver\Types\SmartwaiverFlag;
 
 /**
- * Class SmartwaiverWebhookTest
+ * Class SmartwaiverFlagTest
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverFlagTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test whether a required keys error is generated correctly
@@ -34,12 +35,12 @@ class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
     public function testRequiredKeys()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot create a SmartwaiverWebhook with missing field: endpoint');
+        $this->expectExceptionMessage('Cannot create a SmartwaiverFlag with missing field: reason');
 
-        $webhook = SmartwaiverTypes::createParticipant();
-        unset($webhook['endpoint']);
+        $flag = SmartwaiverTypes::createFlag();
+        unset($flag['reason']);
 
-        $swWebhook = new SmartwaiverWebhook($webhook);
+        $swFlag = new SmartwaiverFlag($flag);
     }
 
     /**
@@ -47,10 +48,10 @@ class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
      */
     public function testSuccess()
     {
-        $webhook = SmartwaiverTypes::createWebhook();
-        $swWebhook = new SmartwaiverWebhook($webhook);
+        $flag = SmartwaiverTypes::createFlag();
+        $swFlag = new SmartwaiverFlag($flag);
 
-        $this->assertEquals($webhook['endpoint'], $swWebhook->endpoint);
-        $this->assertEquals($webhook['emailValidationRequired'], $swWebhook->emailValidationRequired);
+        $this->assertEquals($flag['displayText'], $swFlag->displayText);
+        $this->assertEquals($flag['reason'], $swFlag->reason);
     }
 }

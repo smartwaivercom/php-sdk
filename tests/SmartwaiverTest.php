@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -28,6 +28,8 @@ use Smartwaiver\SmartwaiverResponse;
 use Smartwaiver\Tests\Factories\APISuccessResponses;
 
 use Smartwaiver\Smartwaiver;
+use Smartwaiver\Types\SmartwaiverPhotos;
+use Smartwaiver\Types\SmartwaiverSearch;
 use Smartwaiver\Types\SmartwaiverTemplate;
 use Smartwaiver\Types\SmartwaiverWaiver;
 use Smartwaiver\Types\SmartwaiverWaiverSummary;
@@ -112,6 +114,9 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
             '/v4/waivers?limit=20&templateId=alkagaldeab',
             '/v4/waivers?limit=20&fromDts='.urlencode('2016-11-01 00:00:00'),
             '/v4/waivers?limit=20&toDts='.urlencode('2016-11-01 00:00:00'),
+            '/v4/waivers?limit=20&firstName=Kyle',
+            '/v4/waivers?limit=20&lastName=Smith',
+            '/v4/waivers?limit=20&tag=testing'
         ];
 
         $container = [];
@@ -122,6 +127,9 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $sw->getWaiverSummaries(20, null, 'alkagaldeab');
         $sw->getWaiverSummaries(20, null, '', '2016-11-01 00:00:00');
         $sw->getWaiverSummaries(20, null, '', '', '2016-11-01 00:00:00');
+        $sw->getWaiverSummaries(20, null, '', '', '', 'Kyle');
+        $sw->getWaiverSummaries(20, null, '', '', '', '', 'Smith');
+        $sw->getWaiverSummaries(20, null, '', '', '', '', '', 'testing');
 
         $this->checkGetRequests($container, $paths);
     }
@@ -147,6 +155,152 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $sw->getWaiver('6jebdfxzvrdkd', true);
 
         $this->checkGetRequests($container, $paths);
+    }
+
+    /**
+     * Test the getWaiverPhotos function
+     */
+    public function testGetWaiverPhotos()
+    {
+        $response = APISuccessResponses::photos(1);
+
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, $response, 1);
+
+        $photos = $sw->getWaiverPhotos('6jebdfxzvrdkd');
+        $this->assertInstanceOf(SmartwaiverPhotos::class, $photos);
+
+        $paths = ['/v4/waivers/6jebdfxzvrdkd/photos'];
+        $this->checkGetRequests($container, $paths);
+    }
+
+    /**
+     * Test the search function with default parameters
+     */
+    public function testSearchDefault()
+    {
+        $guid = 'TestingGUID';
+        $count = 105;
+        $pageSize = 100;
+
+        $apiResponse = APISuccessResponses::search($guid, $count, $pageSize);
+
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, $apiResponse);
+
+        $search = $sw->search();
+
+        $this->assertEquals($guid, $search->guid);
+        $this->assertEquals($count, $search->count);
+        $this->assertEquals(2, $search->pages);
+        $this->assertEquals(100, $search->pageSize);
+
+        $this->checkGetRequests($container, ['/v4/search']);
+    }
+
+    /**
+     * Test the search function with default parameters
+     */
+    public function testSearchParams()
+    {
+        $guid = 'TestingGUID';
+        $count = 105;
+        $pageSize = 100;
+
+        $apiResponse = APISuccessResponses::search($guid, $count, $pageSize);
+
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, $apiResponse, 15);
+
+        $sw->search();
+        $sw->search('testing123');
+        $sw->search('', '2017-01-01');
+        $sw->search('', '', '2017-01-02');
+        $sw->search('', '2017-01-01', '2017-01-02');
+        $sw->search('', '', '', 'Kyle');
+        $sw->search('', '', '', '', 'Smith');
+        $sw->search('', '', '', 'Kyle', 'Smith');
+        $sw->search('', '', '', '', '', true);
+        $sw->search('', '', '', '', '', false);
+        $sw->search('', '', '', '', '', null);
+        $sw->search('', '', '', '', '', null, true);
+        $sw->search('', '', '', '', '', null, false);
+        $sw->search('', '', '', '', '', null, true, 'testing');
+        $sw->search('testing123', '', '', '', '', true);
+
+        $this->checkGetRequests($container, [
+            '/v4/search',
+            '/v4/search?templateId=testing123',
+            '/v4/search?fromDts=2017-01-01',
+            '/v4/search?toDts=2017-01-02',
+            '/v4/search?fromDts=2017-01-01&toDts=2017-01-02',
+            '/v4/search?firstName=Kyle',
+            '/v4/search?lastName=Smith',
+            '/v4/search?firstName=Kyle&lastName=Smith',
+            '/v4/search?verified=true',
+            '/v4/search?verified=false',
+            '/v4/search',
+            '/v4/search',
+            '/v4/search?sort=asc',
+            '/v4/search?tag=testing',
+            '/v4/search?templateId=testing123&verified=true'
+        ]);
+    }
+
+    /**
+     * Test the search results function
+     */
+    public function testSearchResults()
+    {
+        $search = new SmartwaiverSearch([
+            'guid' => 'TestingGUID',
+            'count' => 5,
+            'pages' => 1,
+            'pageSize' => 100
+        ]);
+
+        $numWaivers = 5;
+
+        $apiResponse = APISuccessResponses::searchResults($numWaivers);
+
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, $apiResponse);
+
+        $waivers = $sw->searchResult($search, 0);
+
+        $this->assertCount($numWaivers, $waivers);
+        foreach($waivers as $waiver) {
+            $this->assertInstanceOf(SmartwaiverWaiver::class, $waiver);
+        }
+
+        $this->checkGetRequests($container, [
+            '/v4/search/' . $search->guid . '/results?page=0'
+        ]);
+    }
+
+    /**
+     * Test the search results function
+     */
+    public function testSearchResultsByGuid()
+    {
+        $guid = 'TestingGUID';
+        $numWaivers = 5;
+
+        $apiResponse = APISuccessResponses::searchResults($numWaivers);
+
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, $apiResponse);
+
+        $waivers = $sw->searchResultByGuid($guid, 0);
+
+        $this->assertCount($numWaivers, $waivers);
+        foreach($waivers as $waiver) {
+            $this->assertInstanceOf(SmartwaiverWaiver::class, $waiver);
+        }
+
+        $this->checkGetRequests($container, [
+            '/v4/search/' . $guid . '/results?page=0'
+        ]);
     }
 
     /**
@@ -273,6 +427,9 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
             '/v4/waivers?limit=20&templateId=alkagaldeab',
             '/v4/waivers?limit=20&fromDts='.urlencode('2016-11-01 00:00:00'),
             '/v4/waivers?limit=20&toDts='.urlencode('2016-11-01 00:00:00'),
+            '/v4/waivers?limit=20&firstName=Kyle',
+            '/v4/waivers?limit=20&lastName=Smith',
+            '/v4/waivers?limit=20&tag=testing'
         ];
 
         $container = [];
@@ -283,6 +440,9 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $sw->getWaiverSummariesRaw(20, null, 'alkagaldeab');
         $sw->getWaiverSummariesRaw(20, null, '', '2016-11-01 00:00:00');
         $sw->getWaiverSummariesRaw(20, null, '', '', '2016-11-01 00:00:00');
+        $sw->getWaiverSummariesRaw(20, null, '', '', '', 'Kyle');
+        $sw->getWaiverSummariesRaw(20, null, '', '', '', '', 'Smith');
+        $sw->getWaiverSummariesRaw(20, null, '', '', '', '', '', 'testing');
 
         $this->checkGetRequests($container, $paths);
     }
@@ -308,6 +468,94 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $sw->getWaiverRaw('6jebdfxzvrdkd', true);
 
         $this->checkGetRequests($container, $paths);
+    }
+
+    /**
+     * Test the 'getWebhookRaw' function
+     */
+    public function testGetWaiverPhotosRaw()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::photos(1));
+
+        $response = $sw->getWaiverPhotosRaw('6jebdfxzvrdkd');
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $this->checkGetRequests($container, ['/v4/waivers/6jebdfxzvrdkd/photos']);
+    }
+
+    /**
+     * Test the search function with default parameters
+     */
+    public function testSearchRaw()
+    {
+        $paths = [
+            '/v4/search',
+            '/v4/search?templateId=testing123',
+            '/v4/search?fromDts=2017-01-01',
+            '/v4/search?toDts=2017-01-02',
+            '/v4/search?fromDts=2017-01-01&toDts=2017-01-02',
+            '/v4/search?firstName=Kyle',
+            '/v4/search?lastName=Smith',
+            '/v4/search?firstName=Kyle&lastName=Smith',
+            '/v4/search?verified=true',
+            '/v4/search?verified=false',
+            '/v4/search',
+            '/v4/search',
+            '/v4/search?sort=asc',
+            '/v4/search?tag=testing',
+            '/v4/search?templateId=testing123&verified=true'
+        ];
+
+        $guid = 'TestingGUID';
+        $count = 105;
+        $pageSize = 100;
+
+        $apiResponse = APISuccessResponses::search($guid, $count, $pageSize);
+
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, $apiResponse, 15);
+
+        $response = $sw->searchRaw();
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $sw->searchRaw('testing123');
+        $sw->searchRaw('', '2017-01-01');
+        $sw->searchRaw('', '', '2017-01-02');
+        $sw->searchRaw('', '2017-01-01', '2017-01-02');
+        $sw->searchRaw('', '', '', 'Kyle');
+        $sw->searchRaw('', '', '', '', 'Smith');
+        $sw->searchRaw('', '', '', 'Kyle', 'Smith');
+        $sw->searchRaw('', '', '', '', '', true);
+        $sw->searchRaw('', '', '', '', '', false);
+        $sw->searchRaw('', '', '', '', '', null);
+        $sw->searchRaw('', '', '', '', '', null, true);
+        $sw->searchRaw('', '', '', '', '', null, false);
+        $sw->searchRaw('', '', '', '', '', null, true, 'testing');
+        $sw->searchRaw('testing123', '', '', '', '', true);
+
+        $this->checkGetRequests($container, $paths);
+    }
+
+    /**
+     * Test the search results function
+     */
+    public function testSearchResultsByGuidRaw()
+    {
+        $guid = 'TestingGUID';
+        $numWaivers = 5;
+
+        $apiResponse = APISuccessResponses::searchResults($numWaivers);
+
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, $apiResponse);
+
+        $response = $sw->searchResultByGuidRaw($guid, 0);
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $this->checkGetRequests($container, [
+            '/v4/search/' . $guid . '/results?page=0'
+        ]);
     }
 
     /**
@@ -413,7 +661,7 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals('GET', $container[$i]['request']->getMethod());
             $this->assertEquals($paths[$i], $container[$i]['request']->getRequestTarget());
             $this->assertEquals([self::TEST_API_KEY], $container[$i]['request']->getHeader('sw-api-key'));
-            $this->assertEquals(['SmartwaiverSDK:4.0.0-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
+            $this->assertEquals(['SmartwaiverSDK:4.2.1-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
         }
     }
 

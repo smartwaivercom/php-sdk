@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -15,7 +15,7 @@
  * under the License.
  */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../autoload.php';
 
 use Smartwaiver\Smartwaiver;
 
@@ -42,9 +42,12 @@ $verified = null;       // Do not care about whether the waiver has been verifie
 $templateId = '';       // Do not limit the waivers returned to a specific template (Allowed values: Valid template ID)
 $fromDts = '';          // Do not enforce a date range on the query for waivers (Allowed values: ISO 8601 Date) (Requires toDts parameter)
 $toDts = '';            // Used in conjunction with 'fromDts' to provide the date range (Allowed values: ISO 8601 Date) (Requires fromDts parameter)
+$firstName = '';        // Only waivers with a participant having this first name.
+$lastName = '';         // Only waivers with a participant having this last name.
+$tag = '';              // Only waivers with this as the primary tag.
 
 // This will return the the same as the above query because these are the default values
-$waiverSummaries = $sw->getWaiverSummaries($limit, $verified, $templateId, $fromDts, $toDts);
+$waiverSummaries = $sw->getWaiverSummaries($limit, $verified, $templateId, $fromDts, $toDts, $firstName, $lastName, $tag);
 
 // An example limiting the parameters
 $limit = 5;                                     // Limit number returned to 5
@@ -52,8 +55,11 @@ $verified = true;                               // Limit only to waivers that we
 $templateId = '[INSERT TEMPLATE ID]';           // Limit query to waivers of this template ID
 $fromDts = date('c', strtotime('2016-11-01'));  // Limit to waivers signed in November of 2016
 $toDts = date('c', strtotime('2016-12-01'));
+$firstName = 'Kyle';                            // Limit to waivers with a participant named Kyle Smith
+$lastName = 'Smith';
+$tag = 'testing';                               // Only waivers with 'testing' as the primary tag.
 
-$waiverSummaries = $sw->getWaiverSummaries($limit, $verified, $templateId, $fromDts, $toDts);
+$waiverSummaries = $sw->getWaiverSummaries($limit, $verified, $templateId, $fromDts, $toDts, $firstName, $lastName, $tag);
 
 // View all accessible properties of a waiver summary object in:
 // examples/waivers/WaiverSummaryProperties.php

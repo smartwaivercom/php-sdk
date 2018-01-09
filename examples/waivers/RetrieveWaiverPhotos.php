@@ -22,18 +22,27 @@ use Smartwaiver\Smartwaiver;
 // The API Key for your account
 $apiKey = '[INSERT API KEY]';
 
-// The unique ID of the template to be retrieved
-$templateId = '[INSERT TEMPLATE ID]';
+// The unique ID of the signed waiver to retrieve photos for
+$waiverId = '[INSERT WAIVER ID]';
 
 // Set up your Smartwaiver connection using your API Key
 $sw = new Smartwaiver($apiKey);
 
-// Retrieve a specific template (SmartwaiverTemplate object)
-$template = $sw->getWaiverTemplate($templateId);
+// Get the photos for a specific waiver
+$photos = $sw->getWaiverPhotos($waiverId);
 
-// Access properties of the template
-echo 'List single template:' . PHP_EOL;
-echo $template->templateId . ': ' . $template->title . PHP_EOL;
+// Print a little header
+echo PHP_EOL . 'Waiver Photos for: ' . $photos->title . PHP_EOL;
+// echo $photos->waiverId;
+// echo $photos->templateId;
+// echo $photos->createdOn;
 
-// View all accessible properties of a waiver template object in:
-// examples/templates/TemplateProperties.php
+// Loop through photos and print out some meta-data
+foreach ($photos->photos as $photo) {
+    echo $photo->photoId . ': ' . $photo->date;
+    // Other fields
+    // echo $photo->type;
+    // echo $photo->tag;
+    // echo $photo->fileType;
+    // echo $photo->photo; // Base 64 encoded photo
+}

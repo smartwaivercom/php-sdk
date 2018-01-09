@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -72,6 +72,15 @@ class SmartwaiverRoutesTest extends \PHPUnit_Framework_TestCase
 
         $url = SmartwaiverRoutes::getWaiverSummaries(20, null, '', '', '2016-11-01 00:00:00');
         $this->assertEquals(self::BASE_URI . '/v4/waivers?limit=20&toDts='.urlencode('2016-11-01 00:00:00'), $url);
+
+        $url = SmartwaiverRoutes::getWaiverSummaries(20, null, '', '', '', 'Kyle');
+        $this->assertEquals(self::BASE_URI . '/v4/waivers?limit=20&firstName=Kyle', $url);
+
+        $url = SmartwaiverRoutes::getWaiverSummaries(20, null, '', '', '', '', 'Smith');
+        $this->assertEquals(self::BASE_URI . '/v4/waivers?limit=20&lastName=Smith', $url);
+
+        $url = SmartwaiverRoutes::getWaiverSummaries(20, null, '', '', '', '', '', 'testing');
+        $this->assertEquals(self::BASE_URI . '/v4/waivers?limit=20&tag=testing', $url);
     }
 
     /**
@@ -87,6 +96,69 @@ class SmartwaiverRoutesTest extends \PHPUnit_Framework_TestCase
 
         $url = SmartwaiverRoutes::getWaiver('TestingWaiverId', true);
         $this->assertEquals(self::BASE_URI . '/v4/waivers/TestingWaiverId?pdf=true', $url);
+    }
+
+    /**
+     * Test get waiver photos route
+     */
+    public function testGetWaiverPhotos()
+    {
+        $url = SmartwaiverRoutes::getWaiverPhotos('TestingWaiverId');
+        $this->assertEquals(self::BASE_URI . '/v4/waivers/TestingWaiverId/photos', $url);
+    }
+
+    /**
+     * Test search route
+     */
+    public function testSearch()
+    {
+        $url = SmartwaiverRoutes::search();
+        $this->assertEquals(self::BASE_URI . '/v4/search', $url);
+
+        $url = SmartwaiverRoutes::search('TestingTemplateId');
+        $this->assertEquals(self::BASE_URI . '/v4/search?templateId=TestingTemplateId', $url);
+
+        $url = SmartwaiverRoutes::search('', '2016-11-01 00:00:00');
+        $this->assertEquals(self::BASE_URI . '/v4/search?fromDts='.urlencode('2016-11-01 00:00:00'), $url);
+
+        $url = SmartwaiverRoutes::search('', '', '2016-11-01 00:00:00');
+        $this->assertEquals(self::BASE_URI . '/v4/search?toDts='.urlencode('2016-11-01 00:00:00'), $url);
+
+        $url = SmartwaiverRoutes::search('', '', '', 'Kyle');
+        $this->assertEquals(self::BASE_URI . '/v4/search?firstName='.urlencode('Kyle'), $url);
+
+        $url = SmartwaiverRoutes::search('', '', '', '', 'Smith');
+        $this->assertEquals(self::BASE_URI . '/v4/search?lastName='.urlencode('Smith'), $url);
+
+        $url = SmartwaiverRoutes::search('', '', '', '', '', true);
+        $this->assertEquals(self::BASE_URI . '/v4/search?verified=true', $url);
+
+        $url = SmartwaiverRoutes::search('', '', '', '', '', false);
+        $this->assertEquals(self::BASE_URI . '/v4/search?verified=false', $url);
+
+        $url = SmartwaiverRoutes::search('', '', '', '', '', null, true);
+        $this->assertEquals(self::BASE_URI . '/v4/search', $url);
+
+        $url = SmartwaiverRoutes::search('', '', '', '', '', null, false);
+        $this->assertEquals(self::BASE_URI . '/v4/search?sort=asc', $url);
+
+        $url = SmartwaiverRoutes::search('', '', '', '', '', null, true, 'testing');
+        $this->assertEquals(self::BASE_URI . '/v4/search?tag=testing', $url);
+
+        $url = SmartwaiverRoutes::search('', '', '', 'Kyle', 'Smith');
+        $this->assertEquals(self::BASE_URI . '/v4/search?firstName='.urlencode('Kyle').'&lastName='.urlencode('Smith'), $url);
+    }
+
+    /**
+     * Test search results route
+     */
+    public function testSearchResults()
+    {
+        $url = SmartwaiverRoutes::searchResults('TestingGUID', 0);
+        $this->assertEquals(self::BASE_URI . '/v4/search/TestingGUID/results?page=0', $url);
+
+        $url = SmartwaiverRoutes::searchResults('TestingGUID', 1);
+        $this->assertEquals(self::BASE_URI . '/v4/search/TestingGUID/results?page=1', $url);
     }
 
     /**

@@ -19,14 +19,14 @@ namespace Smartwaiver\Tests;
 
 use InvalidArgumentException;
 use Smartwaiver\Tests\Factories\SmartwaiverTypes;
-use Smartwaiver\Types\SmartwaiverWebhook;
+use Smartwaiver\Types\SmartwaiverPhoto;
 
 /**
- * Class SmartwaiverWebhookTest
+ * Class SmartwaiverPhotoTest
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverPhotoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test whether a required keys error is generated correctly
@@ -34,12 +34,12 @@ class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
     public function testRequiredKeys()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot create a SmartwaiverWebhook with missing field: endpoint');
+        $this->expectExceptionMessage('Cannot create a SmartwaiverPhoto with missing field: type');
 
-        $webhook = SmartwaiverTypes::createParticipant();
-        unset($webhook['endpoint']);
+        $photo = SmartwaiverTypes::createPhoto();
+        unset($photo['type']);
 
-        $swWebhook = new SmartwaiverWebhook($webhook);
+        $swPhoto = new SmartwaiverPhoto($photo);
     }
 
     /**
@@ -47,10 +47,14 @@ class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
      */
     public function testSuccess()
     {
-        $webhook = SmartwaiverTypes::createWebhook();
-        $swWebhook = new SmartwaiverWebhook($webhook);
+        $photo = SmartwaiverTypes::createPhoto();
+        $swPhoto = new SmartwaiverPhoto($photo);
 
-        $this->assertEquals($webhook['endpoint'], $swWebhook->endpoint);
-        $this->assertEquals($webhook['emailValidationRequired'], $swWebhook->emailValidationRequired);
+        $this->assertEquals($photo['type'], $swPhoto->type);
+        $this->assertEquals($photo['date'], $swPhoto->date);
+        $this->assertEquals($photo['tag'], $swPhoto->tag);
+        $this->assertEquals($photo['fileType'], $swPhoto->fileType);
+        $this->assertEquals($photo['photoId'], $swPhoto->photoId);
+        $this->assertEquals($photo['photo'], $swPhoto->photo);
     }
 }

@@ -20,20 +20,29 @@ namespace Smartwaiver\Exceptions;
 use GuzzleHttp\Psr7\Response;
 
 /**
- * Class SmartwaiverHTTPException
+ * Class SmartwaiverRateLimitException
  *
  * @package Smartwaiver\Exceptions
  */
-class SmartwaiverHTTPException extends SmartwaiverSDKException
+class SmartwaiverRateLimitException extends SmartwaiverHTTPException
 {
     /**
-     * @var array Stores the JSON response information that was given back by
-     * the API server when it generated the error response.
+     * @var int $requests The number of requests made in the current window
      */
-    private $response;
+    public $requests;
 
     /**
-     * SmartwaiverHTTPException constructor.
+     * @var int $max The maximum number of requests allowed in the current window
+     */
+    public $max;
+
+    /**
+     * @var int $retryAfter How many seconds until the rate limit will expire
+     */
+    public $retryAfter;
+
+    /**
+     * SmartwaiverRateLimitException constructor.
      *
      * @param Response $guzzleResponse The guzzle response object from the bad request
      * @param string $guzzleBody The body of the guzzle response from the bad request
@@ -41,23 +50,12 @@ class SmartwaiverHTTPException extends SmartwaiverSDKException
      */
     public function __construct(Response $guzzleResponse, $guzzleBody, $content)
     {
-        $this->response = [];
-        $this->response['version'] = $content['version'];
-        $this->response['id'] = $content['id'];
-        $this->response['ts'] = $content['ts'];
-        $this->response['type'] = $content['type'];
-        parent::__construct($guzzleResponse, $guzzleBody, $content['message'], $guzzleResponse->getStatusCode());
-    }
+        $rateLimit = $content['rate_limit'];
+        $this->requests = $rateLimit['requests'];
+        $this->max = $rateLimit['max'];
+        $this->retryAfter = $rateLimit['retryAfter'];
+        $content['message'] = 'Retry After ' . $this->retryAfter . ' seconds...';
 
-    /**
-     * This method provides access to the parsed information from the API error
-     * response. This includes the version, timestamp, and UUID of the response
-     *
-     * @return array The response header information
-     *
-     */
-    public function getResponseInfo()
-    {
-        return $this->response;
+        parent::__construct($guzzleResponse, $guzzleBody, $content);
     }
 }

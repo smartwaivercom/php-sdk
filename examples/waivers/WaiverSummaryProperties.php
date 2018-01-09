@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -15,7 +15,7 @@
  * under the License.
  */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../autoload.php';
 
 use Smartwaiver\Smartwaiver;
 
@@ -46,4 +46,8 @@ if(count($waiverSummaries) > 1) {
     echo 'Dob: ' . $waiverSummary->dob . PHP_EOL;
     echo 'Is Minor: ' . ($waiverSummary->isMinor ? 'true' : 'false') . PHP_EOL;
     echo 'Tags: ' . implode(',', $waiverSummary->tags) . PHP_EOL;
+    echo 'Flags: (Display Text, Reason)' . PHP_EOL;
+    foreach ($waiver->flags as $flag) {
+        echo '    ' . $flag->displayText . ', ' . $flag->reason . PHP_EOL;
+    }
 }

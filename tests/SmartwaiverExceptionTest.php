@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -19,6 +19,7 @@ namespace Smartwaiver\Tests;
 
 use GuzzleHttp\Psr7\Response;
 use Smartwaiver\Exceptions\SmartwaiverHTTPException;
+use Smartwaiver\Exceptions\SmartwaiverRateLimitException;
 use Smartwaiver\Exceptions\SmartwaiverSDKException;
 
 /**
@@ -51,6 +52,37 @@ class SmartwaiverExceptionTest extends \PHPUnit_Framework_TestCase
 
         // Everything but the message should get returned
         unset($content['message']);
+        $this->assertEquals($content, $responseInfo);
+    }
+
+    /**
+     * Test that an Rate Limit Exception is properly generated
+     */
+    public function testRateLimitException()
+    {
+        $content = [
+            'version' => 4,
+            'id' => 'id',
+            'ts' => 'ts',
+            'type' => 'rate_limit',
+            'rate_limit' => [
+                'requests' => 101,
+                'max' => 100,
+                'retryAfter' => 14
+            ]
+        ];
+
+        $swException = new SmartwaiverRateLimitException(new Response(429), 'Body Content', $content);
+        $responseInfo = $swException->getResponseInfo();
+
+        $this->assertEquals('Retry After 14 seconds...', $swException->getMessage());
+        $this->assertEquals(429, $swException->getCode());
+        $this->assertEquals('Body Content', $swException->getGuzzleBody());
+        $this->assertEquals(429, $swException->getGuzzleResponse()->getStatusCode());
+
+        // Everything but the message and rate limit should get returned
+        unset($content['message']);
+        unset($content['rate_limit']);
         $this->assertEquals($content, $responseInfo);
     }
 

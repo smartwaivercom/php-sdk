@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -56,6 +56,18 @@ class APIErrorResponses extends APIResponses
         $response = APIResponses::base();
         $response['type'] = 'error';
         $response['message'] = 'Invalid content type';
+        return json_encode($response);
+    }
+
+    public static function rateLimit()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'rate_limit';
+        $response['rate_limit'] = [
+            'requests' => 101,
+            'max' => 100,
+            'retryAfter' => 14
+        ];
         return json_encode($response);
     }
 

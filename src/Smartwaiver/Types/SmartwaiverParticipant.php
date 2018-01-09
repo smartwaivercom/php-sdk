@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -38,7 +38,8 @@ class SmartwaiverParticipant extends SmartwaiverType
         'gender',
         'phone',
         'tags',
-        'customParticipantFields'
+        'customParticipantFields',
+        'flags'
     ];
 
     /**
@@ -82,6 +83,11 @@ class SmartwaiverParticipant extends SmartwaiverType
     public $tags;
 
     /**
+     * @var SmartwaiverFlag[] A list of flags for this participant
+     */
+    public $flags;
+
+    /**
      * @var SmartwaiverCustomField[] Any custom participant fields on the waiver
      */
     public $customParticipantFields;
@@ -117,6 +123,16 @@ class SmartwaiverParticipant extends SmartwaiverType
         // Load the custom participant fields as objects of that type
         foreach($participant['customParticipantFields'] as $customParticipantField) {
             array_push($this->customParticipantFields, new SmartwaiverCustomField($customParticipantField));
+        }
+
+        // Check that flag field is an array
+        $this->flags = array();
+        if(!is_array($participant['flags']))
+            throw new \InvalidArgumentException('Flag field must be an array');
+
+        // Load the flags as objects of that type
+        foreach($participant['flags'] as $flag) {
+            array_push($this->flags, new SmartwaiverFlag($flag));
         }
     }
 }

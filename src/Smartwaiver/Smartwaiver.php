@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -21,13 +21,15 @@ use GuzzleHttp\Client;
 use InvalidArgumentException;
 
 use Smartwaiver\Exceptions\SmartwaiverSDKException;
+use Smartwaiver\Types\SmartwaiverPhotos;
+use Smartwaiver\Types\SmartwaiverSearch;
 use Smartwaiver\Types\SmartwaiverTemplate;
 use Smartwaiver\Types\SmartwaiverWaiver;
 use Smartwaiver\Types\SmartwaiverWaiverSummary;
 use Smartwaiver\Types\SmartwaiverWebhook;
 
 /**
- * Class Smartwaiver
+ * Main class, which provides basic methods to interact with Smartwaiver API.
  *
  */
 class Smartwaiver
@@ -35,7 +37,7 @@ class Smartwaiver
     /**
      * Version of this SDK
      */
-    const VERSION = '4.0.0';
+    const VERSION = '4.2.1';
 
     /**
      * @var Client The Guzzle client used to make requests
@@ -138,19 +140,26 @@ class Smartwaiver
     /**
      * Retrieve a list of waiver summaries matching the given criteria.
      *
-     * @param integer $limit Limit query to this number of the most recent waivers.
-     * @param boolean|null $verified Limit query to waivers that have been verified by email (true) or not verified (false). A null parameter will include waivers regardless of verification status.
-     * @param string $templateId Limit query to signed waivers of the given waiver template ID.
-     * @param string $fromDts Limit query to signed waivers between this ISO 8601 date and the toDts parameter (requires toDts parameter).
-     * @param string $toDts Limit query to signed waivers between fromDts and this ISO 8601 date (requires fromDts parameter).
+     * @param integer $limit Limit to this number of the most recent waivers.
+     * @param boolean|null $verified Limit to waivers that have been verified by email (true), not verified (false), or both (null).
+     * @param string $templateId Limit to waivers of the given waiver template ID.
+     * @param string $fromDts Limit to waivers between this ISO 8601 date and the toDts parameter (requires toDts parameter).
+     * @param string $toDts Limit to waivers between fromDts and this ISO 8601 date (requires fromDts parameter).
+     * @param string $firstName Limit to waivers with any participant having this for a first name (Case Insensitive).
+     * @param string $lastName Limit to waivers with any participant having this for a last name (Case Insensitive).
+     * @param string $tag Limit to waivers with this primary tag.
      *
      * @return SmartwaiverWaiverSummary[] The list of signed waiver summary objects
      *
      * @throws SmartwaiverSDKException
      */
-    public function getWaiverSummaries($limit = 20, $verified = null, $templateId = '', $fromDts = '', $toDts = '')
+    public function getWaiverSummaries($limit = 20, $verified = null,
+                                       $templateId = '', $fromDts = '',
+                                       $toDts = '', $firstName = '',
+                                       $lastName = '', $tag = '')
     {
-        $url = SmartwaiverRoutes::getWaiverSummaries($limit, $verified, $templateId, $fromDts, $toDts);
+        $url = SmartwaiverRoutes::getWaiverSummaries($limit, $verified,
+            $templateId, $fromDts, $toDts, $firstName, $lastName, $tag);
         $this->sendGetRequest($url);
 
         try
@@ -192,6 +201,143 @@ class Smartwaiver
         try
         {
             return new SmartwaiverWaiver($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Retrieve all waiver photos for the given waiver ID
+     *
+     * @param string $waiverId The Unique identifier of the waiver
+     *
+     * @return SmartwaiverPhotos The photos object containt all the photos
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function getWaiverPhotos($waiverId)
+    {
+        $url = SmartwaiverRoutes::getWaiverPhotos($waiverId);
+        $this->sendGetRequest($url);
+
+        // Return the retrieved waiver
+        try
+        {
+            return new SmartwaiverPhotos($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Perform a large search matching the given criteria. This will return a
+     * guid that can then be used to access the results of the search.
+     *
+     * @param string $templateId Limit to waivers of the given waiver template ID.
+     * @param string $fromDts Limit to waivers after this ISO 8601 date.
+     * @param string $toDts Limit to waivers before this ISO 8601 date.
+     * @param string $firstName Limit to waivers with any participant having this for a first name (Case Insensitive).
+     * @param string $lastName Limit to waivers with any participant having this for a last name (Case Insensitive).
+     * @param boolean|null $verified Limit to waivers that have been verified by email (true), not verified (false) or both (null).
+     * @param boolean $sortDesc Sort results in descending (latest signed waiver first) order.
+     * @param string $tag Limit to waivers with this primary tag.
+     *
+     * @return SmartwaiverSearch The object representing the results of the search
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function search($templateId = '', $fromDts = '', $toDts = '',
+                           $firstName = '', $lastName = '',
+                           $verified = null, $sortDesc = true, $tag = '')
+    {
+        $url = SmartwaiverRoutes::search($templateId, $fromDts, $toDts,
+            $firstName, $lastName, $verified, $sortDesc, $tag);
+        $this->sendGetRequest($url);
+
+        try
+        {
+            // Return the results of the search
+            return new SmartwaiverSearch($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Retrieve a page of the given search.
+     *
+     * @param SmartwaiverSearch     $search     The search object to get the results of
+     * @param int                   $page       The page number to retrieve
+     *
+     * @return SmartwaiverWaiver[] A list of the waiver objects in the given page
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function searchResult(SmartwaiverSearch $search, $page)
+    {
+        $url = SmartwaiverRoutes::searchResults($search->guid, $page);
+        $this->sendGetRequest($url);
+
+        try
+        {
+            // Map array data from API JSON response to SmartwaiverWaiver objects
+            $waivers = array_map(function ($data) {
+                return new SmartwaiverWaiver($data);
+            }, $this->lastResponse->responseData);
+
+            return $waivers;
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Retrieve a page of the given search.
+     *
+     * @param string    $guid   The guid of the search results
+     * @param int       $page   The page number to retrieve
+     *
+     * @return SmartwaiverWaiver[] A list of the waiver objects in the given page
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function searchResultByGuid($guid, $page)
+    {
+        $url = SmartwaiverRoutes::searchResults($guid, $page);
+        $this->sendGetRequest($url);
+
+        try
+        {
+            // Map array data from API JSON response to SmartwaiverWaiver objects
+            $waivers = array_map(function ($data) {
+                return new SmartwaiverWaiver($data);
+            }, $this->lastResponse->responseData);
+
+            return $waivers;
         }
         catch(InvalidArgumentException $e)
         {
@@ -313,18 +459,25 @@ class Smartwaiver
     /**
      * Retrieve a list of waiver summaries matching the given criteria.
      *
-     * @param integer $limit Limit query to this number of the most recent waivers.
-     * @param boolean|null $verified Limit query to waivers that have been verified by email (true) or not verified (false). A null parameter will include waivers regardless of verification status.
-     * @param string $templateId Limit query to signed waivers of the given waiver template ID.
-     * @param string $fromDts Limit query to signed waivers between this ISO 8601 date and the toDts parameter (requires toDts parameter).
-     * @param string $toDts Limit query to signed waivers between fromDts and this ISO 8601 date (requires fromDts parameter).
+     * @param integer $limit Limit to this number of the most recent waivers.
+     * @param boolean|null $verified Limit to waivers that have been verified by email (true), not verified (false), or both (null).
+     * @param string $templateId Limit to waivers of the given waiver template ID.
+     * @param string $fromDts Limit to waivers between this ISO 8601 date and the toDts parameter (requires toDts parameter).
+     * @param string $toDts Limit to waivers between fromDts and this ISO 8601 date (requires fromDts parameter).
+     * @param string $firstName Limit to waivers with any participant having this for a first name (Case Insensitive).
+     * @param string $lastName Limit to waivers with any participant having this for a last name (Case Insensitive).
+     * @param string $tag Limit to waivers with this primary tag.
      *
      * @return SmartwaiverRawResponse An object that holds the status code and
      * unprocessed json.
      */
-    public function getWaiverSummariesRaw($limit = 20, $verified = null, $templateId = '', $fromDts = '', $toDts = '')
+    public function getWaiverSummariesRaw($limit = 20, $verified = null,
+                                          $templateId = '', $fromDts = '',
+                                          $toDts = '', $firstName = '',
+                                          $lastName = '', $tag = '')
     {
-        $url = SmartwaiverRoutes::getWaiverSummaries($limit, $verified, $templateId, $fromDts, $toDts);
+        $url = SmartwaiverRoutes::getWaiverSummaries($limit, $verified,
+            $templateId, $fromDts, $toDts, $firstName, $lastName, $tag);
         return $this->sendRawGetRequest($url);
     }
 
@@ -340,6 +493,60 @@ class Smartwaiver
     public function getWaiverRaw($waiverId, $pdf = false)
     {
         $url = SmartwaiverRoutes::getWaiver($waiverId, $pdf);
+        return $this->sendRawGetRequest($url);
+    }
+
+    /**
+     * Retrieve all photos attached to the given waiver ID
+     *
+     * @param string $waiverId The Unique identifier of the waiver
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function getWaiverPhotosRaw($waiverId)
+    {
+        $url = SmartwaiverRoutes::getWaiverPhotos($waiverId);
+        return $this->sendRawGetRequest($url);
+    }
+
+    /**
+     * Perform a large search matching the given criteria. This will return a
+     * guid that can then be used to access the results of the search.
+     *
+     * @param string $templateId Limit to waivers of the given waiver template ID.
+     * @param string $fromDts Limit to waivers after this ISO 8601 date.
+     * @param string $toDts Limit to waivers before this ISO 8601 date.
+     * @param string $firstName Limit to waivers with any participant having this for a first name (Case Insensitive).
+     * @param string $lastName Limit to waivers with any participant having this for a last name (Case Insensitive).
+     * @param boolean|null $verified Limit to waivers that have been verified by email (true), not verified (false) or both (null).
+     * @param boolean $sortDesc Sort results in descending (latest signed waiver first) order.
+     * @param string $tag Limit to waivers with this primary tag.
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function searchRaw($templateId = '', $fromDts = '', $toDts = '',
+                              $firstName = '', $lastName = '',
+                              $verified = null, $sortDesc = true, $tag = '')
+    {
+        $url = SmartwaiverRoutes::search($templateId, $fromDts, $toDts,
+            $firstName, $lastName, $verified, $sortDesc, $tag);
+        return $this->sendRawGetRequest($url);
+    }
+
+    /**
+     * Retrieve a page of the given search.
+     *
+     * @param string    $guid   The guid of the search results
+     * @param int       $page   The page number to retrieve
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function searchResultByGuidRaw($guid, $page)
+    {
+        $url = SmartwaiverRoutes::searchResults($guid, $page);
         return $this->sendRawGetRequest($url);
     }
 

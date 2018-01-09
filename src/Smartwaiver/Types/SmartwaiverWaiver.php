@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -46,6 +46,7 @@ class SmartwaiverWaiver extends SmartwaiverType
         'isMinor',
         'clientIP',
         'tags',
+        'flags',
         'participants',
         'email',
         'marketingAllowed',
@@ -63,6 +64,7 @@ class SmartwaiverWaiver extends SmartwaiverType
         'driversLicenseState',
         'customWaiverFields',
         'guardian',
+        'photos',
         'pdf'
     ];
 
@@ -140,6 +142,11 @@ class SmartwaiverWaiver extends SmartwaiverType
      * @var string[] A list of tags for the waiver
      */
     public $tags;
+
+    /**
+     * @var SmartwaiverFlag[] A list of flags for the waiver
+     */
+    public $flags;
 
     /**
      * @var SmartwaiverParticipant[] A list of participant's
@@ -227,6 +234,11 @@ class SmartwaiverWaiver extends SmartwaiverType
     public $guardian;
 
     /**
+     * @var integer Number of photos attached to this waiver
+     */
+    public $photos;
+
+    /**
      * @var string Base 64 Encoded string of PDF (Empty if PDF was not requested)
      */
     public $pdf;
@@ -261,6 +273,14 @@ class SmartwaiverWaiver extends SmartwaiverType
         $this->clientIP = $waiver['clientIP'];
         $this->tags = $waiver['tags'];
 
+        // Check that flags field is an array
+        $this->flags = array();
+        if(!is_array($waiver['flags']))
+            throw new \InvalidArgumentException('Flags field must be an array');
+        foreach($waiver['flags'] as $flag) {
+            array_push($this->flags, new SmartwaiverFlag($flag));
+        }
+
         // Check that participants is an array and create participant objects
         $this->participants = [];
         if(!is_array($waiver['participants']))
@@ -286,6 +306,7 @@ class SmartwaiverWaiver extends SmartwaiverType
         $this->insurancePolicyNumber = $waiver['insurancePolicyNumber'];
         $this->driversLicenseNumber = $waiver['driversLicenseNumber'];
         $this->driversLicenseState = $waiver['driversLicenseState'];
+        $this->photos = $waiver['photos'];
 
         // Check that custom waiver fields is an array
         $this->customWaiverFields = array();

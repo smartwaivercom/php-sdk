@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -44,7 +44,8 @@ class SmartwaiverWaiverSummary extends SmartwaiverType
         'lastName',
         'dob',
         'isMinor',
-        'tags'
+        'tags',
+        'flags'
     ];
 
     /**
@@ -118,6 +119,11 @@ class SmartwaiverWaiverSummary extends SmartwaiverType
     public $tags;
 
     /**
+     * @var SmartwaiverFlag[] A list of flags for the waiver
+     */
+    public $flags;
+
+    /**
      * Create a SmartwaiverWaiverSummary object by providing an array with all
      * the required keys. See REQUIRED_KEYS for that information.
      *
@@ -145,6 +151,14 @@ class SmartwaiverWaiverSummary extends SmartwaiverType
         $this->dob = $summary['dob'];
         $this->isMinor = $summary['isMinor'];
         $this->tags = $summary['tags'];
+
+        // Check that flags field is an array
+        $this->flags = array();
+        if(!is_array($summary['flags']))
+            throw new \InvalidArgumentException('Flags field must be an array');
+        foreach($summary['flags'] as $flag) {
+            array_push($this->flags, new SmartwaiverFlag($flag));
+        }
     }
 
 }

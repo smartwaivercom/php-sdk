@@ -19,14 +19,14 @@ namespace Smartwaiver\Tests;
 
 use InvalidArgumentException;
 use Smartwaiver\Tests\Factories\SmartwaiverTypes;
-use Smartwaiver\Types\SmartwaiverWebhook;
+use Smartwaiver\Types\SmartwaiverSearch;
 
 /**
- * Class SmartwaiverWebhookTest
+ * Class SmartwaiverSearchTest
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverSearchTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test whether a required keys error is generated correctly
@@ -34,12 +34,12 @@ class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
     public function testRequiredKeys()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot create a SmartwaiverWebhook with missing field: endpoint');
+        $this->expectExceptionMessage('Cannot create a SmartwaiverSearch with missing field: guid');
 
-        $webhook = SmartwaiverTypes::createParticipant();
-        unset($webhook['endpoint']);
+        $search = SmartwaiverTypes::createSearch();
+        unset($search['guid']);
 
-        $swWebhook = new SmartwaiverWebhook($webhook);
+        $swSearch = new SmartwaiverSearch($search);
     }
 
     /**
@@ -47,10 +47,12 @@ class SmartwaiverWebhookTest extends \PHPUnit_Framework_TestCase
      */
     public function testSuccess()
     {
-        $webhook = SmartwaiverTypes::createWebhook();
-        $swWebhook = new SmartwaiverWebhook($webhook);
+        $search = SmartwaiverTypes::createSearch();
+        $swSearch = new SmartwaiverSearch($search);
 
-        $this->assertEquals($webhook['endpoint'], $swWebhook->endpoint);
-        $this->assertEquals($webhook['emailValidationRequired'], $swWebhook->emailValidationRequired);
+        $this->assertEquals($search['guid'], $swSearch->guid);
+        $this->assertEquals($search['count'], $swSearch->count);
+        $this->assertEquals($search['pages'], $swSearch->pages);
+        $this->assertEquals($search['pageSize'], $swSearch->pageSize);
     }
 }

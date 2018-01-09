@@ -18,47 +18,61 @@
 namespace Smartwaiver\Types;
 
 /**
- * Class SmartwaiverCustomField
+ * Class SmartwaiverSearch
  *
- * This class represents a custom field inside of a signed waiver.
+ * This class represents all the data for the result of a search
  *
  * @package Smartwaiver\Types
  */
-class SmartwaiverCustomField extends SmartwaiverType
+class SmartwaiverSearch extends SmartwaiverType
 {
     /**
      * The required fields in the constructor array to create this object
      */
     const REQUIRED_KEYS = [
-        'value',
-        'displayText'
+        'guid',
+        'count',
+        'pages',
+        'pageSize'
     ];
 
     /**
-     * @var string The value of the custom waiver field
+     * @var string The guid of the search result
      */
-    public $value;
+    public $guid;
 
     /**
-     * @var string The display text of the custom waiver field
+     * @var string The number of waivers in the search results
      */
-    public $displayText;
+    public $count;
 
     /**
-     * Create a SmartwaiverCustomField object by providing an array with all
-     * the required keys. See REQUIRED_KEYS for that information.
+     * @var string The number of pages in the search results
+     */
+    public $pages;
+
+    /**
+     * @var string The number of waivers in each page of results
+     */
+    public $pageSize;
+
+    /**
+     * Create a SmartwaiverSearch object by providing an array with all the
+     * required keys. See REQUIRED_KEYS for that information.
      *
-     * @param array $field  The input array containing all the information
+     * @param array $search  The input array containing all the information
      *
      * @throws \InvalidArgumentException Thrown if any of the required keys are missing
      */
-    public function __construct(array $field)
+    public function __construct(array $search)
     {
         // Check for required keys
-        parent::__construct($field, self::REQUIRED_KEYS, self::class);
+        parent::__construct($search, self::REQUIRED_KEYS, self::class);
 
         // Load all the information into public variables
-        $this->value = $field['value'];
-        $this->displayText = $field['displayText'];
+        $this->guid = $search['guid'];
+        $this->count = $search['count'];
+        $this->pages = $search['pages'];
+        $this->pageSize = $search['pageSize'];
     }
 }

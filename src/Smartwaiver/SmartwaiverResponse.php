@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Smartwaiver
+ * Copyright 2018 Smartwaiver
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain
@@ -19,6 +19,7 @@ namespace Smartwaiver;
 
 use GuzzleHttp\Psr7\Response;
 use Smartwaiver\Exceptions\SmartwaiverHTTPException;
+use Smartwaiver\Exceptions\SmartwaiverRateLimitException;
 use Smartwaiver\Exceptions\SmartwaiverSDKException;
 
 /**
@@ -40,6 +41,9 @@ class SmartwaiverResponse
         'template' => 'template',
         'waivers' => 'waivers',
         'waiver' => 'waiver',
+        'photos' => 'photos',
+        'search' => 'search',
+        'search_results' => 'search_results',
         'webhooks' => 'webhooks'
     ];
 
@@ -74,7 +78,7 @@ class SmartwaiverResponse
     public $type;
 
     /**
-     * @var string The particular response data according to the type specified
+     * @var array The particular response data according to the type specified
      */
     public $responseData;
 
@@ -131,12 +135,13 @@ class SmartwaiverResponse
         // Check HTTP response code for problems
         $success = [200, 201];
         $error = [400, 401, 402, 404, 405, 406, 500];
+        $rateLimit = 429;
         if(in_array($guzzleResponse->getStatusCode(), $success)) {
             // Check that the response type is in our type mappings
             if(array_key_exists($this->type, self::RESPONSE_TYPES)) {
                 // Check that the data field is there
-                if(array_key_exists(self::RESPONSE_TYPES[$this->type], $content))
-                    $this->responseData = $content[self::RESPONSE_TYPES[$this->type]];
+                if(array_key_exists($this->type, $content))
+                    $this->responseData = $content[$this->type];
                 else
                     throw new SmartwaiverSDKException(
                         $guzzleResponse,
@@ -149,6 +154,21 @@ class SmartwaiverResponse
                     $guzzleResponse,
                     $this->guzzleBody,
                     'JSON response contains unknown type: "' . $this->type . '"'
+                );
+            }
+        }
+        else if($guzzleResponse->getStatusCode() == $rateLimit) {
+            if(array_key_exists('rate_limit', $content) &&
+                array_key_exists('requests', $content['rate_limit']) &&
+                array_key_exists('max', $content['rate_limit']) &&
+                array_key_exists('retryAfter', $content['rate_limit']))
+            {
+                throw new SmartwaiverRateLimitException($guzzleResponse, $this->guzzleBody, $content);
+            } else {
+                throw new SmartwaiverSDKException(
+                    $guzzleResponse,
+                    $this->guzzleBody,
+                    'Malformed rate limit response'
                 );
             }
         }
