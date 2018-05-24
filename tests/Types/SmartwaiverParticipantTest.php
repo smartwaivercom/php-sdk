@@ -61,8 +61,15 @@ class SmartwaiverParticipantTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($participant['tags'], $swParticipant->tags);
 
         $this->assertCount(count($participant['customParticipantFields']), $swParticipant->customParticipantFields);
-        foreach($swParticipant->customParticipantFields as $key => $customParticipantField) {
+        $this->assertCount(count($participant['customParticipantFields']), $swParticipant->customParticipantFieldsByGuid);
+        foreach($swParticipant->customParticipantFields as $customParticipantField) {
             $this->assertInstanceOf(SmartwaiverCustomField::class, $customParticipantField);
+        }
+        foreach($swParticipant->customParticipantFieldsByGuid as $guid => $customParticipantField) {
+            $this->assertInstanceOf(SmartwaiverCustomField::class, $customParticipantField);
+        }
+        foreach($participant['customParticipantFields'] as $guid => $customParticipantField) {
+            $this->assertArrayHasKey($guid, $swParticipant->customParticipantFieldsByGuid);
         }
     }
 }

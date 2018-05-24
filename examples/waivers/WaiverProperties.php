@@ -28,7 +28,7 @@ $waiverId = '[INSERT WAIVER ID]';
 // Set up your Smartwaiver connection using your API Key
 $sw = new Smartwaiver($apiKey);
 
-// Get a specific of waiver (include pdf)
+// Get a specific of waiver (include the PDF as a base 64 encoded string)
 $waiver = $sw->getWaiver($waiverId, $pdf = true);
 
 // Access waiver properties
@@ -65,7 +65,7 @@ foreach ($waiver->participants as $index => $participant) {
         . PHP_EOL . '        Gender: ' . $participant->gender
         . PHP_EOL . '        Tags: ' . implode(',', $participant->tags)
         . PHP_EOL . '        Custom Participant Fields: (GUID, Display Text, Value)' . PHP_EOL;
-    foreach ($participant->customParticipantFields as $guid => $customParticipantField) {
+    foreach ($participant->customParticipantFieldsByGuid as $guid => $customParticipantField) {
         echo '            ' . $guid . ', '
             . $customParticipantField->displayText
             . ', ' . $customParticipantField->value . PHP_EOL;
@@ -76,7 +76,7 @@ foreach ($waiver->participants as $index => $participant) {
     }
 }
 echo 'Custom Waiver Fields: (GUID, Display Text, Value)' . PHP_EOL;
-foreach ($waiver->customWaiverFields as $guid => $customWaiverField) {
+foreach ($waiver->customWaiverFieldsByGuid as $guid => $customWaiverField) {
     echo '    ' . $guid
         . ', ' . $customWaiverField->displayText
         . ', ' . $customWaiverField->value . PHP_EOL;
@@ -106,4 +106,5 @@ echo 'Drivers License Number: ' . $waiver->driversLicenseNumber . PHP_EOL;
 echo 'Drivers License State: ' . $waiver->driversLicenseState . PHP_EOL;
 echo 'Client IP: ' . $waiver->clientIP . PHP_EOL;
 echo 'Number of Photos: ' . $waiver->photos . PHP_EOL;
+// A base 64 encoded string
 echo 'PDF: ' . $waiver->pdf . PHP_EOL;

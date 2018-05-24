@@ -96,8 +96,15 @@ class SmartwaiverWaiverTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($waiver['driversLicenseState'], $swWaiver->driversLicenseState);
 
         $this->assertCount(count($waiver['customWaiverFields']), $swWaiver->customWaiverFields);
-        foreach($swWaiver->customWaiverFields as $key => $customWaiverField) {
+        $this->assertCount(count($waiver['customWaiverFields']), $swWaiver->customWaiverFieldsByGuid);
+        foreach($swWaiver->customWaiverFields as $customWaiverField) {
             $this->assertInstanceOf(SmartwaiverCustomField::class, $customWaiverField);
+        }
+        foreach($swWaiver->customWaiverFieldsByGuid as $guid => $customWaiverField) {
+            $this->assertInstanceOf(SmartwaiverCustomField::class, $customWaiverField);
+        }
+        foreach($waiver['customWaiverFields'] as $guid => $customWaiverField) {
+            $this->assertArrayHasKey($guid, $swWaiver->customWaiverFieldsByGuid);
         }
 
         $this->assertInstanceOf(SmartwaiverGuardian::class, $swWaiver->guardian);

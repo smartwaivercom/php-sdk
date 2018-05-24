@@ -42,6 +42,7 @@ class SmartwaiverResponse
         'waivers' => 'waivers',
         'waiver' => 'waiver',
         'photos' => 'photos',
+        'signatures' => 'signatures',
         'search' => 'search',
         'search_results' => 'search_results',
         'webhooks' => 'webhooks'

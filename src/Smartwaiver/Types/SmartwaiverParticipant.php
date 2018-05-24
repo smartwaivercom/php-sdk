@@ -88,9 +88,14 @@ class SmartwaiverParticipant extends SmartwaiverType
     public $flags;
 
     /**
-     * @var SmartwaiverCustomField[] Any custom participant fields on the waiver
+     * @var SmartwaiverCustomField[] Any custom participant fields on the waiver (numerically indexed array)
      */
     public $customParticipantFields;
+
+    /**
+     * @var SmartwaiverCustomField[] Any custom participant fields on the waiver (associative array)
+     */
+    public $customParticipantFieldsByGuid;
 
     /**
      * Create a SmartwaiverParticipant object by providing an array with all
@@ -117,12 +122,15 @@ class SmartwaiverParticipant extends SmartwaiverType
 
         // Check that custom participant fields is an array
         $this->customParticipantFields = array();
+        $this->customParticipantFieldsByGuid = array();
         if(!is_array($participant['customParticipantFields']))
             throw new \InvalidArgumentException('Custom participant fields must be an array');
 
         // Load the custom participant fields as objects of that type
-        foreach($participant['customParticipantFields'] as $customParticipantField) {
-            array_push($this->customParticipantFields, new SmartwaiverCustomField($customParticipantField));
+        foreach($participant['customParticipantFields'] as $guid => $customParticipantField) {
+            $customParticipantFieldObject = new SmartwaiverCustomField($customParticipantField);
+            array_push($this->customParticipantFields, $customParticipantFieldObject);
+            $this->customParticipantFieldsByGuid[$guid] = $customParticipantFieldObject;
         }
 
         // Check that flag field is an array

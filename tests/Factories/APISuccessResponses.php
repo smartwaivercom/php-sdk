@@ -112,6 +112,29 @@ class APISuccessResponses extends APIResponses
     }
 
     /**
+     * Create a basic waiver signatures API response
+     *
+     * @param int $numParticipants The number of participant signatures to include
+     * @param int $numBodySignatures The number of boyd signatures to include
+     * @param int $numBodyInitials The number of body initials to include
+     *
+     * @return string The JSON response
+     */
+    public static function signatures($numParticipants, $numBodySignatures, $numBodyInitials)
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'signatures';
+        $response['signatures'] = SmartwaiverTypes::createSignatures();
+        for($i=1; $i<$numParticipants; $i++)
+            array_push($response['signatures']['participants'], 'BASE64ENCODED');
+        for($i=1; $i<$numBodySignatures; $i++)
+            array_push($response['signatures']['bodySignatures'], 'BASE64ENCODED');
+        for($i=1; $i<$numBodyInitials; $i++)
+            array_push($response['signatures']['bodyInitials'], 'BASE64ENCODED');
+        return json_encode($response);
+    }
+
+    /**
      * Create a basic search API response
      *
      * @param int $numWaivers The number of waivers to include

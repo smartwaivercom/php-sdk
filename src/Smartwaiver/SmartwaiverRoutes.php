@@ -130,6 +130,19 @@ class SmartwaiverRoutes
     }
 
     /**
+     * Get the URL to retrieve all drawn signatures attached to the given waiver ID
+     *
+     * @param string $waiverId The Unique identifier of the waiver
+     *
+     * @return string The URL to retrieve the information.
+     */
+    public static function getWaiverSignatures($waiverId)
+    {
+        $url = self::BASE_URI . self::ROUTE_WAIVERS.'/'.$waiverId.'/signatures';
+        return $url;
+    }
+
+    /**
      * Get the URL to search for waivers matching the given criteria.
      *
      * @param string $templateId Limit query to signed waivers of the given waiver template ID.

@@ -30,6 +30,7 @@ use Smartwaiver\Tests\Factories\APISuccessResponses;
 use Smartwaiver\Smartwaiver;
 use Smartwaiver\Types\SmartwaiverPhotos;
 use Smartwaiver\Types\SmartwaiverSearch;
+use Smartwaiver\Types\SmartwaiverSignatures;
 use Smartwaiver\Types\SmartwaiverTemplate;
 use Smartwaiver\Types\SmartwaiverWaiver;
 use Smartwaiver\Types\SmartwaiverWaiverSummary;
@@ -171,6 +172,23 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SmartwaiverPhotos::class, $photos);
 
         $paths = ['/v4/waivers/6jebdfxzvrdkd/photos'];
+        $this->checkGetRequests($container, $paths);
+    }
+
+    /**
+     * Test the getWaiverSignatures function
+     */
+    public function testGetWaiverSignatures()
+    {
+        $response = APISuccessResponses::signatures(1, 1, 1);
+
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, $response, 1);
+
+        $signatures = $sw->getWaiverSignatures('6jebdfxzvrdkd');
+        $this->assertInstanceOf(SmartwaiverSignatures::class, $signatures);
+
+        $paths = ['/v4/waivers/6jebdfxzvrdkd/signatures'];
         $this->checkGetRequests($container, $paths);
     }
 

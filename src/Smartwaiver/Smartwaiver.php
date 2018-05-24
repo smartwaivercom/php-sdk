@@ -23,6 +23,7 @@ use InvalidArgumentException;
 use Smartwaiver\Exceptions\SmartwaiverSDKException;
 use Smartwaiver\Types\SmartwaiverPhotos;
 use Smartwaiver\Types\SmartwaiverSearch;
+use Smartwaiver\Types\SmartwaiverSignatures;
 use Smartwaiver\Types\SmartwaiverTemplate;
 use Smartwaiver\Types\SmartwaiverWaiver;
 use Smartwaiver\Types\SmartwaiverWaiverSummary;
@@ -37,7 +38,7 @@ class Smartwaiver
     /**
      * Version of this SDK
      */
-    const VERSION = '4.2.1';
+    const VERSION = '4.2.4';
 
     /**
      * @var Client The Guzzle client used to make requests
@@ -217,7 +218,7 @@ class Smartwaiver
      *
      * @param string $waiverId The Unique identifier of the waiver
      *
-     * @return SmartwaiverPhotos The photos object containt all the photos
+     * @return SmartwaiverPhotos The photos object containing all the photos
      *
      * @throws SmartwaiverSDKException
      */
@@ -230,6 +231,35 @@ class Smartwaiver
         try
         {
             return new SmartwaiverPhotos($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Retrieve all drawn signatures for the given waiver ID
+     *
+     * @param string $waiverId The Unique identifier of the waiver
+     *
+     * @return SmartwaiverSignatures The signatures object containing all the signatures
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function getWaiverSignatures($waiverId)
+    {
+        $url = SmartwaiverRoutes::getWaiverSignatures($waiverId);
+        $this->sendGetRequest($url);
+
+        // Return the retrieved waiver
+        try
+        {
+            return new SmartwaiverSignatures($this->lastResponse->responseData);
         }
         catch(InvalidArgumentException $e)
         {
@@ -507,6 +537,20 @@ class Smartwaiver
     public function getWaiverPhotosRaw($waiverId)
     {
         $url = SmartwaiverRoutes::getWaiverPhotos($waiverId);
+        return $this->sendRawGetRequest($url);
+    }
+
+    /**
+     * Retrieve all drawn signatures attached to the given waiver ID
+     *
+     * @param string $waiverId The Unique identifier of the waiver
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function getWaiverSignaturesRaw($waiverId)
+    {
+        $url = SmartwaiverRoutes::getWaiverSignatures($waiverId);
         return $this->sendRawGetRequest($url);
     }
 

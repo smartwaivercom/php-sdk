@@ -224,9 +224,14 @@ class SmartwaiverWaiver extends SmartwaiverType
     public $driversLicenseState;
 
     /**
-     * @var SmartwaiverCustomField[] Any custom waiver fields on the waiver
+     * @var SmartwaiverCustomField[] Any custom waiver fields on the waiver (numerically indexed array)
      */
     public $customWaiverFields;
+
+    /**
+     * @var SmartwaiverCustomField[] Any custom waiver fields on the waiver (associative array)
+     */
+    public $customWaiverFieldsByGuid;
 
     /**
      * @var SmartwaiverGuardian If there are only minors on the waiver, this field contains the guardian information
@@ -310,10 +315,13 @@ class SmartwaiverWaiver extends SmartwaiverType
 
         // Check that custom waiver fields is an array
         $this->customWaiverFields = array();
+        $this->customWaiverFieldsByGuid = array();
         if(!is_array($waiver['customWaiverFields']))
             throw new \InvalidArgumentException('Custom waiver fields must be an array');
-        foreach($waiver['customWaiverFields'] as $customWaiverField) {
-            array_push($this->customWaiverFields, new SmartwaiverCustomField($customWaiverField));
+        foreach($waiver['customWaiverFields'] as $guid => $customWaiverField) {
+            $customWaiverFieldObject = new SmartwaiverCustomField($customWaiverField);
+            array_push($this->customWaiverFields, $customWaiverFieldObject);
+            $this->customWaiverFieldsByGuid[$guid] = $customWaiverFieldObject;
         }
 
         // Check that guardian field is not null

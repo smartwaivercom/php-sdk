@@ -1,5 +1,10 @@
 # Release Notes
 
+## v4.2.4 (2018-05-24)
+
+- Added ability to access custom fields by GUID
+- Added signatures route
+
 ## v4.2.3 (2018-01-08)
 
 ### Added

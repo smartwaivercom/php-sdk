@@ -108,6 +108,15 @@ class SmartwaiverRoutesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test get waiver signatures route
+     */
+    public function testGetWaiverSignatures()
+    {
+        $url = SmartwaiverRoutes::getWaiverSignatures('TestingWaiverId');
+        $this->assertEquals(self::BASE_URI . '/v4/waivers/TestingWaiverId/signatures', $url);
+    }
+
+    /**
      * Test search route
      */
     public function testSearch()

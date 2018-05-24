@@ -167,6 +167,27 @@ class SmartwaiverTypes
     }
 
     /**
+     * Create an input array for a SmartwaiverSignature object
+     *
+     * @return array
+     */
+    public static function createSignatures()
+    {
+        return [
+            'waiverId' => '6jebdfxzvrdkd',
+            'templateId' => 'sprswrvh2keeh',
+            'title' => 'Demo Waiver',
+            'createdOn' => '2017-01-24 13:12:29',
+            'signatures' => [
+                'participants' => ['BASE64ENCODED'],
+                'guardian' => ['BASE64ENCODED'],
+                'bodySignatures' => ['BASE64ENCODED'],
+                'bodyInitials' => ['BASE64ENCODED']
+            ]
+        ];
+    }
+
+    /**
      * Create an input array for a SmartwaiverWebhook object
      *
      * @return array

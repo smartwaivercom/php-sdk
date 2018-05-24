@@ -36,6 +36,7 @@ Table of Contents
     * [Smartwaiver/Types/SmartwaiverPhoto](#smartwaivertypessmartwaiverphoto)
     * [Smartwaiver/Types/SmartwaiverPhotos](#smartwaivertypessmartwaiverphotos)
     * [Smartwaiver/Types/SmartwaiverSearch](#smartwaivertypessmartwaiversearch)
+    * [Smartwaiver/Types/SmartwaiverSignatures](#smartwaivertypessmartwaiversignatures)
     * [Smartwaiver/Types/SmartwaiverTemplate](#smartwaivertypessmartwaivertemplate)
     * [Smartwaiver/Types/SmartwaiverType](#smartwaivertypessmartwaivertype)
     * [Smartwaiver/Types/SmartwaiverWaiver](#smartwaivertypessmartwaiverwaiver)
@@ -1027,7 +1028,28 @@ Smartwaiver::getWaiverPhotos( string $waiverId ): \Smartwaiver\Types\Smartwaiver
 
 **Return Value:**
 
-The photos object containt all the photos
+The photos object containing all the photos
+
+---
+
+### getWaiverSignatures
+
+Retrieve all drawn signatures for the given waiver ID
+
+```php
+Smartwaiver::getWaiverSignatures( string $waiverId ): \Smartwaiver\Types\SmartwaiverSignatures
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$waiverId` | **string** | The Unique identifier of the waiver |
+
+
+**Return Value:**
+
+The signatures object containing all the signatures
 
 ---
 
@@ -1256,6 +1278,28 @@ Retrieve all photos attached to the given waiver ID
 
 ```php
 Smartwaiver::getWaiverPhotosRaw( string $waiverId ): \Smartwaiver\SmartwaiverRawResponse
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$waiverId` | **string** | The Unique identifier of the waiver |
+
+
+**Return Value:**
+
+An object that holds the status code and
+unprocessed json.
+
+---
+
+### getWaiverSignaturesRaw
+
+Retrieve all drawn signatures attached to the given waiver ID
+
+```php
+Smartwaiver::getWaiverSignaturesRaw( string $waiverId ): \Smartwaiver\SmartwaiverRawResponse
 ```
 
 **Parameters:**
@@ -1599,6 +1643,29 @@ The URL to retrieve the information.
 
 ---
 
+### getWaiverSignatures
+
+Get the URL to retrieve all drawn signatures attached to the given waiver ID
+
+```php
+SmartwaiverRoutes::getWaiverSignatures( string $waiverId ): string
+```
+
+* This method is **static**.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$waiverId` | **string** | The Unique identifier of the waiver |
+
+
+**Return Value:**
+
+The URL to retrieve the information.
+
+---
+
 ### search
 
 Get the URL to search for waivers matching the given criteria.
@@ -1862,6 +1929,7 @@ This class represents a single participant on a signed waiver.
 | public | `tags` | **array<mixed,string>** |
 | public | `flags` | **array<mixed,\Smartwaiver\Types\SmartwaiverFlag>** |
 | public | `customParticipantFields` | **array<mixed,\Smartwaiver\Types\SmartwaiverCustomField>** |
+| public | `customParticipantFieldsByGuid` | **array<mixed,\Smartwaiver\Types\SmartwaiverCustomField>** |
 
 ### __construct
 
@@ -2055,6 +2123,62 @@ The input array
 
 ---
 
+## Smartwaiver/Types/SmartwaiverSignatures
+
+Class SmartwaiverSignatures
+
+This class represents the data for signatures drawn on a waiver
+
+* Full name: \Smartwaiver\Types\SmartwaiverSignatures
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `waiverId` | **string** |
+| public | `templateId` | **string** |
+| public | `title` | **string** |
+| public | `createdOn` | **string** |
+| public | `participantSignatures` | **array<mixed,string>** |
+| public | `guardianSignatures` | **array<mixed,string>** |
+| public | `bodySignatures` | **array<mixed,string>** |
+| public | `bodyInitials` | **array<mixed,string>** |
+
+### __construct
+
+Create a SmartwaiverSignatures object by providing an array with all the
+required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverSignatures::__construct( array $signatures )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$signatures` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverSignatures::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
 ## Smartwaiver/Types/SmartwaiverTemplate
 
 Class SmartwaiverTemplate
@@ -2205,6 +2329,7 @@ response are placed in public variables.
 | public | `driversLicenseNumber` | **string** |
 | public | `driversLicenseState` | **string** |
 | public | `customWaiverFields` | **array<mixed,\Smartwaiver\Types\SmartwaiverCustomField>** |
+| public | `customWaiverFieldsByGuid` | **array<mixed,\Smartwaiver\Types\SmartwaiverCustomField>** |
 | public | `guardian` | **\Smartwaiver\Types\SmartwaiverGuardian** |
 | public | `photos` | **integer** |
 | public | `pdf` | **string** |
