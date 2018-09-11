@@ -38,6 +38,9 @@ class SmartwaiverRoutes
     const ROUTE_WAIVERS = '/v4/waivers';
     const ROUTE_SEARCH = '/v4/search';
     const ROUTE_WEBHOOKS = '/v4/webhooks/configure';
+    const ROUTE_WEBHOOK_QUEUES = '/v4/webhooks/queues';
+    const ROUTE_WEBHOOK_QUEUE_ACCOUNT = '/v4/webhooks/queues/account';
+    const ROUTE_WEBHOOK_QUEUE_TEMPLATE = '/v4/webhooks/queues/template';
 
     /**
      * Get the URL to retrieve a list of all waiver templates in the account.
@@ -219,5 +222,69 @@ class SmartwaiverRoutes
     public static function setWebhookConfig()
     {
         return self::BASE_URI . self::ROUTE_WEBHOOKS;
+    }
+
+    /**
+     * Get the URL to retrieve information about state of all webhook queues
+     *
+     * @return string The URL to retrieve the information.
+     */
+    public static function getWebhookQueues()
+    {
+        return self::BASE_URI . self::ROUTE_WEBHOOK_QUEUES;
+    }
+
+    /**
+     * Get the URL to retrieve a message from the account queue
+     *
+     * @param bool $delete
+     *
+     * @return string The URL to retrieve the information.
+     */
+    public static function getWebhookQueueAccountMessage($delete = false)
+    {
+        return self::BASE_URI . self::ROUTE_WEBHOOK_QUEUE_ACCOUNT . '?delete='
+            . ($delete ? 'true' : 'false');
+    }
+
+    /**
+     * Get the URL to retrieve a message from the account queue
+     *
+     * @param string $templateId  The ID of the waiver template specifying the queue to retrieve from
+     * @param bool $delete  Whether the message should be deleted from the queue while it's retrieved
+     *
+     * @return string The URL to retrieve the information.
+     */
+    public static function getWebhookQueueTemplateMessage($templateId, $delete = false)
+    {
+        return self::BASE_URI . self::ROUTE_WEBHOOK_QUEUE_TEMPLATE .'/' .
+            $templateId . '?delete='.($delete ? 'true' : 'false');
+    }
+
+    /**
+     * Get the URL to delete a message from the account queue
+     *
+     * @param string $messageId  The ID of the message to delete
+     *
+     * @return string The URL to retrieve the information.
+     */
+    public static function deleteWebhookQueueAccountMessage($messageId)
+    {
+        return self::BASE_URI . self::ROUTE_WEBHOOK_QUEUE_ACCOUNT . '/' .
+            $messageId;
+    }
+
+    /**
+     * Get the URL to delete a message from the account queue
+     *
+     * @param string $templateId  The ID of the waiver template specifying the queue to delete from
+     * @param string $messageId  The ID of the message to delete
+     *
+     * @return string The URL to retrieve the information.
+     */
+    public static function deleteWebhookQueueTemplateMessage($templateId, $messageId)
+    {
+        return self::BASE_URI . self::ROUTE_WEBHOOK_QUEUE_TEMPLATE . '/' .
+            $templateId . '/' . $messageId;
     }
 }

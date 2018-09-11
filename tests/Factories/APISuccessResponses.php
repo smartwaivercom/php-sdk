@@ -184,4 +184,94 @@ class APISuccessResponses extends APIResponses
         return json_encode($response);
     }
 
+    /**
+     * Create a basic webhook queues API response
+     *
+     * @return string The JSON response
+     */
+    public static function webhookQueues()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'api_webhook_all_queue_message_count';
+        $response['api_webhook_all_queue_message_count'] = SmartwaiverTypes::createWebhookQueues();
+        return json_encode($response);
+    }
+
+    /**
+     * Create a webhook queue account message API response
+     *
+     * @return string The JSON response
+     */
+    public static function webhookQueueAccountMessage()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'api_webhook_account_message_get';
+        $response['api_webhook_account_message_get'] = SmartwaiverTypes::createWebhookMessage();
+        return json_encode($response);
+    }
+
+    /**
+     * Create a webhook queue account message empty API response
+     *
+     * @return string The JSON response
+     */
+    public static function webhookQueueAccountMessageNull()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'api_webhook_account_message_get';
+        $response['api_webhook_account_message_get'] = null;
+        return json_encode($response);
+    }
+
+    /**
+     * Create a webhook queue template message API response
+     *
+     * @return string The JSON response
+     */
+    public static function webhookQueueTemplateMessage()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'api_webhook_template_message_get';
+        $response['api_webhook_template_message_get'] = SmartwaiverTypes::createWebhookMessage();
+        return json_encode($response);
+    }
+
+    /**
+     * Create a webhook queue template message empty API response
+     *
+     * @return string The JSON response
+     */
+    public static function webhookQueueTemplateMessageNull()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'api_webhook_template_message_get';
+        $response['api_webhook_template_message_get'] = null;
+        return json_encode($response);
+    }
+
+    /**
+     * Create a webhook queue account message delete API response
+     *
+     * @return string The JSON response
+     */
+    public static function webhookQueueAccountMessageDelete()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'api_webhook_account_message_delete';
+        $response['api_webhook_account_message_delete'] = SmartwaiverTypes::createWebhookMessageDelete();
+        return json_encode($response);
+    }
+
+    /**
+     * Create a webhook queue template message delete API response
+     *
+     * @return string The JSON response
+     */
+    public static function webhookQueueTemplateMessageDelete()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'api_webhook_template_message_delete';
+        $response['api_webhook_template_message_delete'] = SmartwaiverTypes::createWebhookMessageDelete();
+        return json_encode($response);
+    }
 }

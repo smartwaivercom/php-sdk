@@ -1,5 +1,9 @@
 # Release Notes
 
+## v4.2.8 (2018-09-05)
+
+- Added webhook queues
+
 ## v4.2.4 (2018-05-24)
 
 - Added ability to access custom fields by GUID

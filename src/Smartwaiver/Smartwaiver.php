@@ -28,6 +28,10 @@ use Smartwaiver\Types\SmartwaiverTemplate;
 use Smartwaiver\Types\SmartwaiverWaiver;
 use Smartwaiver\Types\SmartwaiverWaiverSummary;
 use Smartwaiver\Types\SmartwaiverWebhook;
+use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessage;
+use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessageDelete;
+use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueue;
+use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueues;
 
 /**
  * Main class, which provides basic methods to interact with Smartwaiver API.
@@ -38,7 +42,7 @@ class Smartwaiver
     /**
      * Version of this SDK
      */
-    const VERSION = '4.2.4';
+    const VERSION = '4.2.8';
 
     /**
      * @var Client The Guzzle client used to make requests
@@ -461,6 +465,161 @@ class Smartwaiver
     }
 
     /**
+     * Retrieve the current message counts for all webhook queues enabled
+     *
+     * @return SmartwaiverWebhookQueues  The status information for all queues
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function getWebhookQueues()
+    {
+        $url = SmartwaiverRoutes::getWebhookQueues();
+        $this->sendGetRequest($url);
+
+        try
+        {
+            // Return the retrieved webhook queues
+            return new SmartwaiverWebhookQueues($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Retrieve a message from the webhook account queue
+     *
+     * @param bool $delete  Whether to delete the message as it's retrieved
+     *
+     * @return SmartwaiverWebhookMessage|null  A message from the account queue
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function getWebhookQueueAccountMessage($delete = false)
+    {
+        $url = SmartwaiverRoutes::getWebhookQueueAccountMessage($delete);
+        $this->sendGetRequest($url);
+
+        // No messages
+        if (is_null($this->lastResponse->responseData)) {
+            return null;
+        }
+
+        try
+        {
+            // Return the retrieved webhook message
+            return new SmartwaiverWebhookMessage($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Retrieve a message from a webhook template queue
+     *
+     * @param string $templateId  The template ID to retrieve the message from
+     * @param bool $delete  Whether to delete the message as it's retrieved
+     *
+     * @return SmartwaiverWebhookMessage  A message from the template queue
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function getWebhookQueueTemplateMessage($templateId, $delete = false)
+    {
+        $url = SmartwaiverRoutes::getWebhookQueueTemplateMessage($templateId, $delete);
+        $this->sendGetRequest($url);
+
+        // No messages
+        if (is_null($this->lastResponse->responseData)) {
+            return null;
+        }
+
+        try
+        {
+            // Return the retrieved webhook message
+            return new SmartwaiverWebhookMessage($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Delete a message from the webhook account queue
+     *
+     * @param string $messageId  The message to delete from the queue
+     *
+     * @return SmartwaiverWebhookMessageDelete  Whether the message was deleted
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function deleteWebhookQueueAccountMessage($messageId)
+    {
+        $url = SmartwaiverRoutes::deleteWebhookQueueAccountMessage($messageId);
+        $this->sendDeleteRequest($url);
+
+        try
+        {
+            // Return the retrieved webhook message
+            return new SmartwaiverWebhookMessageDelete($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Delete a message from a webhook template queue
+     *
+     * @param string $templateId  The template ID to retrieve the message from
+     * @param string $messageId  The message to delete from the queue
+     *
+     * @return SmartwaiverWebhookMessageDelete  Whether the message was deleted
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function deleteWebhookQueueTemplateMessage($templateId, $messageId)
+    {
+        $url = SmartwaiverRoutes::deleteWebhookQueueTemplateMessage($templateId, $messageId);
+        $this->sendDeleteRequest($url);
+
+        try
+        {
+            // Return the retrieved webhook message
+            return new SmartwaiverWebhookMessageDelete($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
      * Retrieve a list of all waiver templates in the account.
      *
      * @return SmartwaiverRawResponse An object that holds the status code and
@@ -634,6 +793,76 @@ class Smartwaiver
     }
 
     /**
+     * Retrieve the current message counts for all webhook queues enabled
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function getWebhookQueuesRaw()
+    {
+        $url = SmartwaiverRoutes::getWebhookQueues();
+        return $this->sendRawGetRequest($url);
+    }
+
+    /**
+     * Retrieve a message from the webhook account queue
+     *
+     * @param bool $delete  Whether to delete the message as it's retrieved
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function getWebhookQueueAccountMessageRaw($delete = false)
+    {
+        $url = SmartwaiverRoutes::getWebhookQueueAccountMessage($delete);
+        return $this->sendRawGetRequest($url);
+    }
+
+    /**
+     * Retrieve a message from a webhook template queue
+     *
+     * @param string $templateId  The template ID to retrieve the message from
+     * @param bool $delete  Whether to delete the message as it's retrieved
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function getWebhookQueueTemplateMessageRaw($templateId, $delete = false)
+    {
+        $url = SmartwaiverRoutes::getWebhookQueueTemplateMessage($templateId, $delete);
+        return $this->sendRawGetRequest($url);
+    }
+
+    /**
+     * Delete a message from the webhook account queue
+     *
+     * @param string $messageId  The message to delete from the queue
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function deleteWebhookQueueAccountMessageRaw($messageId)
+    {
+        $url = SmartwaiverRoutes::deleteWebhookQueueAccountMessage($messageId);
+        return $this->sendRawDeleteRequest($url);
+    }
+
+    /**
+     * Delete a message from a webhook template queue
+     *
+     * @param string $templateId  The template ID to retrieve the message from
+     * @param string $messageId  The message to delete from the queue
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function deleteWebhookQueueTemplateMessageRaw($templateId, $messageId)
+    {
+        $url = SmartwaiverRoutes::deleteWebhookQueueTemplateMessage($templateId, $messageId);
+        return $this->sendRawDeleteRequest($url);
+    }
+
+    /**
      * Get the SmartwaiverResponse objected created for the most recent API
      * request. Useful for error handling if an exception is thrown.
      *
@@ -669,6 +898,36 @@ class Smartwaiver
     {
         // Send the request and process the response
         $guzzleResponse = $this->client->request('GET', $url);
+
+        // Return the status code and body of the response
+        return new SmartwaiverRawResponse($guzzleResponse);
+    }
+
+    /**
+     * Send a DELETE request to the given URL, process the response with a
+     * SmartwaiverResponse object and set that to $this->lastResponse.
+     *
+     * @param string $url The route to send the DELETE request to
+     */
+    private function sendDeleteRequest($url)
+    {
+        // Send the request and process the response
+        $guzzleResponse = $this->client->request('DELETE', $url);
+        $this->lastResponse = new SmartwaiverResponse($guzzleResponse);
+    }
+
+    /**
+     * Send a DELETE request to the given URL and send back the raw response.
+     *
+     * @param string $url The route to send the DELETE request to
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    private function sendRawDeleteRequest($url)
+    {
+        // Send the request and process the response
+        $guzzleResponse = $this->client->request('DELETE', $url);
 
         // Return the status code and body of the response
         return new SmartwaiverRawResponse($guzzleResponse);

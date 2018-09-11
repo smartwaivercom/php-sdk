@@ -42,6 +42,11 @@ Table of Contents
     * [Smartwaiver/Types/SmartwaiverWaiver](#smartwaivertypessmartwaiverwaiver)
     * [Smartwaiver/Types/SmartwaiverWaiverSummary](#smartwaivertypessmartwaiverwaiversummary)
     * [Smartwaiver/Types/SmartwaiverWebhook](#smartwaivertypessmartwaiverwebhook)
+    * [Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessage](#smartwaivertypeswebhookqueuessmartwaiverwebhookmessage)
+    * [Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessageDelete](#smartwaivertypeswebhookqueuessmartwaiverwebhookmessagedelete)
+    * [Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessagePayload](#smartwaivertypeswebhookqueuessmartwaiverwebhookmessagepayload)
+    * [Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookQueue](#smartwaivertypeswebhookqueuessmartwaiverwebhookqueue)
+    * [Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookQueues](#smartwaivertypeswebhookqueuessmartwaiverwebhookqueues)
 
 Installation
 ==========
@@ -498,6 +503,108 @@ echo 'EmailValidationRequired: ' . $newWebhook->emailValidationRequired . PHP_EO
 
 This code is also provided in [RetrieveWebhooks.php](examples/webhooks/RetrieveWebhooks.php)
 and [SetWebhooks.php](examples/webhooks/SetWebhooks.php)
+
+
+Retrieve Messages From Webhook Queues
+----------
+
+Instead of using a public webhook endpoint you can set up your account to put webhooks in a queue system, which can be accessed using this API.
+Webhooks will be placed in the queue as soon as the waiver is finished processing and will remain there for 7 days.
+Our webhook queues also have support for separate queues for every template if you wish.
+To view your current webhook settings, we first need to set a Smartwaiver object.
+Make sure to put in your account's API Key where it says `[INSERT API KEY]`
+
+```php
+// The API Key for your account
+$apiKey = '[INSERT API KEY]';
+
+// Set up your Smartwaiver connection using your API Key
+$sw = new Smartwaiver($apiKey);
+```
+
+First we can see how many webhook queues we have set up!
+
+```php
+// Get the current webhook queue information
+$queues = $sw->getWebhookQueues();
+```
+
+This returns a nice obejct that has information about how many messages are in our queues.
+If our queues don't exist yet, there won't be any information!
+
+```php
+// Access the account level webhook information
+if (is_null($queues->accountQueue)) {
+    echo 'Account Queue: N/A' . PHP_EOL;
+} else {
+    echo 'Account Queue:' . PHP_EOL;
+    echo "\tTotal Messages: " . $queues->accountQueue->messagesTotal . PHP_EOL;
+    echo "\tMessages Not Visible: " . $queues->accountQueue->messagesNotVisible . PHP_EOL;
+    echo "\tMessages Delayed: " . $queues->accountQueue->messagesDelayed . PHP_EOL;
+}
+
+// Access the template level webhook information
+foreach ($queues->templateQueues as $templateId => $templateQueue) {
+    echo 'Template Queue (' . $templateId . '):' . PHP_EOL;
+    echo "\tTotal Messages: " . $queues->accountQueue->messagesTotal . PHP_EOL;
+    echo "\tMessages Not Visible: " . $queues->accountQueue->messagesNotVisible . PHP_EOL;
+    echo "\tMessages Delayed: " . $queues->accountQueue->messagesDelayed . PHP_EOL;
+}
+```
+
+Now, if we have some messages in our queue (or not) we can poll to retrieve a message.
+
+```php
+// Retrieve a message from the account queue
+$message = $sw->getWebhookQueueAccountMessage();
+```
+
+Or if we want to get a message from a template queue:
+
+```php
+// The Unique ID of the waiver template
+$templateId = '[INSERT TEMPLATE ID]';
+
+// Retrieve a message from the template queue
+$message = $sw->getWebhookQueueAccountMessage($templateId);
+```
+
+This will retrieve one message and we can then access the body of the message.
+If there are no messages a null object will be returned.
+
+```php
+// Check for empty queue
+if (is_null($message)) {
+    echo 'No messages in account queue.' . PHP_EOL;
+    exit;
+}
+
+// Print out message info
+echo 'Message in Account Queue' . PHP_EOL;
+echo "\tMessage ID: " . $message->messageId . PHP_EOL;
+echo "\tMessage Payload: " . PHP_EOL;
+echo "\t\tWaiver ID: " . $message->body->uniqueId . PHP_EOL;
+echo "\t\tEvent: " . $message->body->event . PHP_EOL;
+```
+
+Now that we have processed the message we can delete it.
+
+```php
+$delete = $sw->deleteWebhookQueueAccountMessage($message->messageId);
+
+echo 'Deletion Success: ' . ($delete->success ? 'true' : 'false') . PHP_EOL;
+```
+
+If we instead wanted to delete it while we retrieved (not recommended since if errors occur in your processing that webhook is lost) we could do this:
+
+```php
+// Optionally we can delete the message when we retrieve it, by passing a delete flag
+$message = $sw->getWebhookQueueAccountMessage(true);
+```
+
+This code is also provided in [RetrieveWebhookQueues.php](examples/queues/RetrieveWebhookQueues.php), RetrieveTemplateMessage.php](examples/queues/RetrieveTemplateMessage.php)
+and [RetrieveAccountMessage.php](examples/queues/RetrieveAccountMessage.php)
+
 
 Exception Handling
 ==========
@@ -1183,6 +1290,106 @@ The new webhook configuration will be returned
 
 ---
 
+### getWebhookQueues
+
+Retrieve the current message counts for all webhook queues enabled
+
+```php
+Smartwaiver::getWebhookQueues(  ): \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueues
+```
+
+**Return Value:**
+
+The status information for all queues
+
+---
+
+### getWebhookQueueAccountMessage
+
+Retrieve a message from the webhook account queue
+
+```php
+Smartwaiver::getWebhookQueueAccountMessage( boolean $delete = false ): \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessage|null
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$delete` | **boolean** | Whether to delete the message as it's retrieved |
+
+
+**Return Value:**
+
+A message from the account queue
+
+---
+
+### getWebhookQueueTemplateMessage
+
+Retrieve a message from a webhook template queue
+
+```php
+Smartwaiver::getWebhookQueueTemplateMessage( string $templateId, boolean $delete = false ): \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessage
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$templateId` | **string** | The template ID to retrieve the message from |
+| `$delete` | **boolean** | Whether to delete the message as it's retrieved |
+
+
+**Return Value:**
+
+A message from the template queue
+
+---
+
+### deleteWebhookQueueAccountMessage
+
+Delete a message from the webhook account queue
+
+```php
+Smartwaiver::deleteWebhookQueueAccountMessage( string $messageId ): \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessageDelete
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$messageId` | **string** | The message to delete from the queue |
+
+
+**Return Value:**
+
+Whether the message was deleted
+
+---
+
+### deleteWebhookQueueTemplateMessage
+
+Delete a message from a webhook template queue
+
+```php
+Smartwaiver::deleteWebhookQueueTemplateMessage( string $templateId, string $messageId ): \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessageDelete
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$templateId` | **string** | The template ID to retrieve the message from |
+| `$messageId` | **string** | The message to delete from the queue |
+
+
+**Return Value:**
+
+Whether the message was deleted
+
+---
+
 ### getWaiverTemplatesRaw
 
 Retrieve a list of all waiver templates in the account.
@@ -1398,6 +1605,111 @@ Smartwaiver::setWebhookConfigRaw( string $endpoint, string $emailValidationRequi
 |-----------|------|-------------|
 | `$endpoint` | **string** | A valid url to set as the webhook endpoint |
 | `$emailValidationRequired` | **string** | Sets when the webhook is fired (use constants from SmartwaiverWebhook). |
+
+
+**Return Value:**
+
+An object that holds the status code and
+unprocessed json.
+
+---
+
+### getWebhookQueuesRaw
+
+Retrieve the current message counts for all webhook queues enabled
+
+```php
+Smartwaiver::getWebhookQueuesRaw(  ): \Smartwaiver\SmartwaiverRawResponse
+```
+
+**Return Value:**
+
+An object that holds the status code and
+unprocessed json.
+
+---
+
+### getWebhookQueueAccountMessageRaw
+
+Retrieve a message from the webhook account queue
+
+```php
+Smartwaiver::getWebhookQueueAccountMessageRaw( boolean $delete = false ): \Smartwaiver\SmartwaiverRawResponse
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$delete` | **boolean** | Whether to delete the message as it's retrieved |
+
+
+**Return Value:**
+
+An object that holds the status code and
+unprocessed json.
+
+---
+
+### getWebhookQueueTemplateMessageRaw
+
+Retrieve a message from a webhook template queue
+
+```php
+Smartwaiver::getWebhookQueueTemplateMessageRaw( string $templateId, boolean $delete = false ): \Smartwaiver\SmartwaiverRawResponse
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$templateId` | **string** | The template ID to retrieve the message from |
+| `$delete` | **boolean** | Whether to delete the message as it's retrieved |
+
+
+**Return Value:**
+
+An object that holds the status code and
+unprocessed json.
+
+---
+
+### deleteWebhookQueueAccountMessageRaw
+
+Delete a message from the webhook account queue
+
+```php
+Smartwaiver::deleteWebhookQueueAccountMessageRaw( string $messageId ): \Smartwaiver\SmartwaiverRawResponse
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$messageId` | **string** | The message to delete from the queue |
+
+
+**Return Value:**
+
+An object that holds the status code and
+unprocessed json.
+
+---
+
+### deleteWebhookQueueTemplateMessageRaw
+
+Delete a message from a webhook template queue
+
+```php
+Smartwaiver::deleteWebhookQueueTemplateMessageRaw( string $templateId, string $messageId ): \Smartwaiver\SmartwaiverRawResponse
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$templateId` | **string** | The template ID to retrieve the message from |
+| `$messageId` | **string** | The message to delete from the queue |
 
 
 **Return Value:**
@@ -1745,6 +2057,116 @@ SmartwaiverRoutes::setWebhookConfig(  ): string
 ```
 
 * This method is **static**.
+
+**Return Value:**
+
+The URL to retrieve the information.
+
+---
+
+### getWebhookQueues
+
+Get the URL to retrieve information about state of all webhook queues
+
+```php
+SmartwaiverRoutes::getWebhookQueues(  ): string
+```
+
+* This method is **static**.
+
+**Return Value:**
+
+The URL to retrieve the information.
+
+---
+
+### getWebhookQueueAccountMessage
+
+Get the URL to retrieve a message from the account queue
+
+```php
+SmartwaiverRoutes::getWebhookQueueAccountMessage( boolean $delete = false ): string
+```
+
+* This method is **static**.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$delete` | **boolean** |  |
+
+
+**Return Value:**
+
+The URL to retrieve the information.
+
+---
+
+### getWebhookQueueTemplateMessage
+
+Get the URL to retrieve a message from the account queue
+
+```php
+SmartwaiverRoutes::getWebhookQueueTemplateMessage( string $templateId, boolean $delete = false ): string
+```
+
+* This method is **static**.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$templateId` | **string** | The ID of the waiver template specifying the queue to retrieve from |
+| `$delete` | **boolean** | Whether the message should be deleted from the queue while it's retrieved |
+
+
+**Return Value:**
+
+The URL to retrieve the information.
+
+---
+
+### deleteWebhookQueueAccountMessage
+
+Get the URL to delete a message from the account queue
+
+```php
+SmartwaiverRoutes::deleteWebhookQueueAccountMessage( string $messageId ): string
+```
+
+* This method is **static**.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$messageId` | **string** | The ID of the message to delete |
+
+
+**Return Value:**
+
+The URL to retrieve the information.
+
+---
+
+### deleteWebhookQueueTemplateMessage
+
+Get the URL to delete a message from the account queue
+
+```php
+SmartwaiverRoutes::deleteWebhookQueueTemplateMessage( string $templateId, string $messageId ): string
+```
+
+* This method is **static**.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$templateId` | **string** | The ID of the waiver template specifying the queue to delete from |
+| `$messageId` | **string** | The ID of the message to delete |
+
 
 **Return Value:**
 
@@ -2473,6 +2895,256 @@ Retrieve the input array this object was constructed from
 
 ```php
 SmartwaiverWebhook::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+## Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessage
+
+Class SmartwaiverWebhookMessage
+
+This class represents information about a smartwaiver webhook message
+
+* Full name: \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessage
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `messageId` | **string** |
+| public | `payload` | **\Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessagePayload** |
+
+### __construct
+
+Create a SmartwaiverWebhookMessage object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverWebhookMessage::__construct( array $webhookMessage )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$webhookMessage` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverWebhookMessage::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+## Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessageDelete
+
+Class SmartwaiverWebhookMessageDelete
+
+This class represents information returned from deleting a webhook message
+
+* Full name: \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessageDelete
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `success` | **boolean** |
+
+### __construct
+
+Create a SmartwaiverWebhookMessageDelete object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverWebhookMessageDelete::__construct( array $webhookMessageDelete )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$webhookMessageDelete` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverWebhookMessageDelete::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+## Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessagePayload
+
+Class SmartwaiverWebhookMessagePayload
+
+This class represents information about a webhook message payload
+
+* Full name: \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessagePayload
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `uniqueId` | **string** |
+| public | `event` | **string** |
+
+### __construct
+
+Create a SmartwaiverWebhookMessagePayload object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverWebhookMessagePayload::__construct( array $webhookMessagePayload )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$webhookMessagePayload` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverWebhookMessagePayload::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+## Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookQueue
+
+Class SmartwaiverWebhookQueue
+
+This class represents information about a smartwaiver webhook queue
+
+* Full name: \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueue
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `messagesTotal` | **integer** |
+| public | `messagesNotVisible` | **integer** |
+| public | `messagesDelayed` | **integer** |
+
+### __construct
+
+Create a SmartwaiverWebhookQueue object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverWebhookQueue::__construct( array $webhookQueue )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$webhookQueue` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverWebhookQueue::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+## Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookQueues
+
+Class SmartwaiverWebhookQueues
+
+This class contains information about counts in all your webhook queues.
+
+* Full name: \Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueues
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `accountQueue` | **\Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueue** |
+| public | `templateQueues` | **array<mixed,\Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueue>** |
+
+### __construct
+
+Create a SmartwaiverWebhookQueues object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverWebhookQueues::__construct( array $webhookQueues )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$webhookQueues` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverWebhookQueues::getArrayInput(  ): array
 ```
 
 **Return Value:**

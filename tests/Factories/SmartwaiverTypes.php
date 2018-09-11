@@ -256,4 +256,69 @@ class SmartwaiverTypes
             'pageSize' => 100
         ];
     }
+
+    /**
+     * Create an input array for a SmartwaiverWebhookQueue object
+     *
+     * @return array
+     */
+    public static function createWebhookQueue()
+    {
+        return [
+            'messagesTotal' => 0,
+            'messagesNotVisible' => 0,
+            'messagesDelayed' => 0
+        ];
+    }
+
+    /**
+     * Create an input array for a SmartwaiverWebhookQueues object
+     *
+     * @return array
+     */
+    public static function createWebhookQueues()
+    {
+        return [
+            'account' => SmartwaiverTypes::createWebhookQueue(),
+            'template-4fc7d12601941' => SmartwaiverTypes::createWebhookQueue()
+        ];
+    }
+
+    /**
+     * Create an input array for a SmartwaiverWebhookMessage object
+     *
+     * @return array
+     */
+    public static function createWebhookMessage()
+    {
+        return [
+            'messageId' => '9d58e8fc-6353-4ceb-b0a3-5412f3d05e28',
+            'payload' => SmartwaiverTypes::createWebhookMessagePayload(),
+        ];
+    }
+
+    /**
+     * Create an input array for a SmartwaiverWebhookMessagePayload object
+     *
+     * @return array
+     */
+    public static function createWebhookMessagePayload()
+    {
+        return [
+            'unique_id' => '9d58e8fc-6353-4ceb-b0a3-5412f3d05e28',
+            'event' => 'new-waiver'
+        ];
+    }
+
+    /**
+     * Create an input array for a SmartwaiverWebhookMessageDelete object
+     *
+     * @return array
+     */
+    public static function createWebhookMessageDelete()
+    {
+        return [
+            'success' => true,
+        ];
+    }
 }

@@ -35,6 +35,9 @@ use Smartwaiver\Types\SmartwaiverTemplate;
 use Smartwaiver\Types\SmartwaiverWaiver;
 use Smartwaiver\Types\SmartwaiverWaiverSummary;
 use Smartwaiver\Types\SmartwaiverWebhook;
+use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessage;
+use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessageDelete;
+use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueues;
 
 /**
  * Class SmartwaiverTest
@@ -390,6 +393,124 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the getWebhookQueues function
+     */
+    public function testGetWebhookQueues()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueues());
+
+        $webhook = $sw->getWebhookQueues();
+        $this->assertInstanceOf(SmartwaiverWebhookQueues::class, $webhook);
+
+        $this->checkGetRequests($container, ['/v4/webhooks/queues']);
+    }
+
+    /**
+     * Test the getWebhookQueueAccountMessage function
+     */
+    public function testGetWebhookQueueAccountMessage()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueAccountMessage(), 3);
+
+        $webhook = $sw->getWebhookQueueAccountMessage();
+        $this->assertInstanceOf(SmartwaiverWebhookMessage::class, $webhook);
+
+        $webhook = $sw->getWebhookQueueAccountMessage(false);
+        $this->assertInstanceOf(SmartwaiverWebhookMessage::class, $webhook);
+
+        $webhook = $sw->getWebhookQueueAccountMessage(true);
+        $this->assertInstanceOf(SmartwaiverWebhookMessage::class, $webhook);
+
+        $this->checkGetRequests($container, [
+            '/v4/webhooks/queues/account?delete=false',
+            '/v4/webhooks/queues/account?delete=false',
+            '/v4/webhooks/queues/account?delete=true'
+        ]);
+    }
+
+    /**
+     * Test the getWebhookQueueAccountMessage function for null response
+     */
+    public function testGetWebhookQueueAccountMessageEmpty()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueAccountMessageNull());
+
+        $webhook = $sw->getWebhookQueueAccountMessage();
+        $this->assertNull($webhook);
+
+        $this->checkGetRequests($container, ['/v4/webhooks/queues/account?delete=false']);
+    }
+
+    /**
+     * Test the getWebhookQueueTemplateMessage function
+     */
+    public function testGetWebhookQueueTemplateMessage()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueTemplateMessage(), 3);
+
+        $webhook = $sw->getWebhookQueueTemplateMessage('TestingGUID');
+        $this->assertInstanceOf(SmartwaiverWebhookMessage::class, $webhook);
+
+        $webhook = $sw->getWebhookQueueTemplateMessage('TestingGUID', false);
+        $this->assertInstanceOf(SmartwaiverWebhookMessage::class, $webhook);
+
+        $webhook = $sw->getWebhookQueueTemplateMessage('TestingGUID', true);
+        $this->assertInstanceOf(SmartwaiverWebhookMessage::class, $webhook);
+
+        $this->checkGetRequests($container, [
+            '/v4/webhooks/queues/template/TestingGUID?delete=false',
+            '/v4/webhooks/queues/template/TestingGUID?delete=false',
+            '/v4/webhooks/queues/template/TestingGUID?delete=true'
+        ]);
+    }
+
+    /**
+     * Test the getWebhookQueueTemplateMessage function for null response
+     */
+    public function testGetWebhookQueueTemplateMessageEmpty()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueTemplateMessageNull());
+
+        $webhook = $sw->getWebhookQueueTemplateMessage('TestingGUID');
+        $this->assertNull($webhook);
+
+        $this->checkGetRequests($container, ['/v4/webhooks/queues/template/TestingGUID?delete=false']);
+    }
+
+    /**
+     * Test the deleteWebhookQueueAccountMessage function
+     */
+    public function testDeleteWebhookQueueAccountMessage()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueAccountMessageDelete());
+
+        $webhook = $sw->deleteWebhookQueueAccountMessage('MessageID');
+        $this->assertInstanceOf(SmartwaiverWebhookMessageDelete::class, $webhook);
+
+        $this->checkDeleteRequests($container, ['/v4/webhooks/queues/account/MessageID']);
+    }
+
+    /**
+     * Test the deleteWebhookQueueTemplateMessage function
+     */
+    public function testDeleteWebhookQueueTemplateMessage()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueTemplateMessageDelete());
+
+        $webhook = $sw->deleteWebhookQueueTemplateMessage('TestingGUID', 'MessageID');
+        $this->assertInstanceOf(SmartwaiverWebhookMessageDelete::class, $webhook);
+
+        $this->checkDeleteRequests($container, ['/v4/webhooks/queues/template/TestingGUID/MessageID']);
+    }
+
+    /**
      * Test the 'getWaiverTemplatesRaw' function.
      */
     public function testGetWaiverTemplatesRaw()
@@ -617,6 +738,76 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the 'getWebhookQueuesRaw' function
+     */
+    public function testGetWebhookQueuesRaw()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueues());
+
+        $response = $sw->getWebhookQueuesRaw();
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $this->checkGetRequests($container, ['/v4/webhooks/queues']);
+    }
+
+    /**
+     * Test the 'getWebhookQueueAccountMessageRaw' function
+     */
+    public function testGetWebhookQueueAccountMessageRaw()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueAccountMessage());
+
+        $response = $sw->getWebhookQueueAccountMessageRaw();
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $this->checkGetRequests($container, ['/v4/webhooks/queues/account?delete=false']);
+    }
+
+    /**
+     * Test the 'getWebhookQueueTemplateMessageRaw' function
+     */
+    public function testGetWebhookQueueTemplateMessageRaw()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueTemplateMessage());
+
+        $response = $sw->getWebhookQueueTemplateMessageRaw('TestingGUID');
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $this->checkGetRequests($container, ['/v4/webhooks/queues/template/TestingGUID?delete=false']);
+    }
+
+    /**
+     * Test the 'deleteWebhookQueueAccountMessageRaw' function
+     */
+    public function testDeleteWebhookQueueAccountMessageRaw()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueAccountMessageDelete());
+
+        $response = $sw->deleteWebhookQueueAccountMessageRaw('MessageId');
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $this->checkDeleteRequests($container, ['/v4/webhooks/queues/account/MessageId']);
+    }
+
+    /**
+     * Test the 'deleteWebhookQueueTemplateMessageRaw' function
+     */
+    public function testDeleteWebhookQueueTemplateMessageRaw()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhookQueueTemplateMessageDelete());
+
+        $response = $sw->deleteWebhookQueueTemplateMessageRaw('TestingGUID', 'MessageId');
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $this->checkDeleteRequests($container, ['/v4/webhooks/queues/template/TestingGUID/MessageId']);
+    }
+
+    /**
      * Test the ability to get the last response the SDK received
      */
     public function testLastResponse()
@@ -673,14 +864,38 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
      */
     private function checkGetRequests($container, $paths)
     {
+        $this->checkRequests('GET', $container, $paths);
+    }
+
+    /**
+     * Check that the given container contains the appropriate DELETE requests
+     * specified in the path array
+     *
+     * @param Request[] $container The container of mocked guzzle requests
+     * @param string[] $paths The paths of the expected requests
+     */
+    private function checkDeleteRequests($container, $paths)
+    {
+        $this->checkRequests('DELETE', $container, $paths);
+    }
+
+    /**
+     * Check that the given container contains the appropriate requests
+     * specified in the path array
+     *
+     * @param string $method The type of requests made
+     * @param Request[] $container The container of mocked guzzle requests
+     * @param string[] $paths The paths of the expected requests
+     */
+    private function checkRequests($method, $container, $paths)
+    {
         // Check that the right requests were sent
         $this->assertCount(count($paths), $container);
         for($i=0; $i<count($paths); $i++) {
-            $this->assertEquals('GET', $container[$i]['request']->getMethod());
+            $this->assertEquals($method, $container[$i]['request']->getMethod());
             $this->assertEquals($paths[$i], $container[$i]['request']->getRequestTarget());
             $this->assertEquals([self::TEST_API_KEY], $container[$i]['request']->getHeader('sw-api-key'));
-            $this->assertEquals(['SmartwaiverSDK:4.2.1-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
+            $this->assertEquals(['SmartwaiverSDK:4.2.8-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
         }
     }
-
 }

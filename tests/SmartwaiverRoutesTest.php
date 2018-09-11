@@ -187,4 +187,61 @@ class SmartwaiverRoutesTest extends \PHPUnit_Framework_TestCase
         $url = SmartwaiverRoutes::setWebhookConfig();
         $this->assertEquals(self::BASE_URI . '/v4/webhooks/configure', $url);
     }
+
+    /**
+     * Test webhook queues route
+     */
+    public function testWebhookQueues()
+    {
+        $url = SmartwaiverRoutes::getWebhookQueues();
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues', $url);
+    }
+
+    /**
+     * Test webhook queues account message route
+     */
+    public function testWebhookQueueAccountMessage()
+    {
+        $url = SmartwaiverRoutes::getWebhookQueueAccountMessage();
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues/account?delete=false', $url);
+
+        $url = SmartwaiverRoutes::getWebhookQueueAccountMessage(false);
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues/account?delete=false', $url);
+
+        $url = SmartwaiverRoutes::getWebhookQueueAccountMessage(true);
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues/account?delete=true', $url);
+    }
+
+    /**
+     * Test webhook queues template message route
+     */
+    public function testWebhookQueueTemplateMessage()
+    {
+        $url = SmartwaiverRoutes::getWebhookQueueTemplateMessage('TestingGUID');
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues/template/TestingGUID?delete=false', $url);
+
+        $url = SmartwaiverRoutes::getWebhookQueueTemplateMessage('TestingGUID', false);
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues/template/TestingGUID?delete=false', $url);
+
+        $url = SmartwaiverRoutes::getWebhookQueueTemplateMessage('TestingGUID', true);
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues/template/TestingGUID?delete=true', $url);
+    }
+
+    /**
+     * Test webhook queues account message delete route
+     */
+    public function testWebhookQueueAccountMessageDelete()
+    {
+        $url = SmartwaiverRoutes::deleteWebhookQueueAccountMessage('MessageID');
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues/account/MessageID', $url);
+    }
+
+    /**
+     * Test webhook queues template message delete route
+     */
+    public function testWebhookQueueTemplateMessageDelete()
+    {
+        $url = SmartwaiverRoutes::deleteWebhookQueueTemplateMessage('TestingGUID', 'MessageID');
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues/template/TestingGUID/MessageID', $url);
+    }
 }

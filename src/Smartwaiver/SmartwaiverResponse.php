@@ -45,7 +45,12 @@ class SmartwaiverResponse
         'signatures' => 'signatures',
         'search' => 'search',
         'search_results' => 'search_results',
-        'webhooks' => 'webhooks'
+        'webhooks' => 'webhooks',
+        'api_webhook_all_queue_message_count' => 'api_webhook_all_queue_message_count',
+        'api_webhook_account_message_get' => 'api_webhook_account_message_get',
+        'api_webhook_template_message_get' => 'api_webhook_template_message_get',
+        'api_webhook_account_message_delete' => 'api_webhook_account_message_delete',
+        'api_webhook_template_message_delete' => 'api_webhook_template_message_delete'
     ];
 
     /**
