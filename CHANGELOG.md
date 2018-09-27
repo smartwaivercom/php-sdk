@@ -1,5 +1,9 @@
 # Release Notes
 
+## v4.2.9 (2018-09-27)
+
+- Added vanity URLs to template objects
+
 ## v4.2.8 (2018-09-05)
 
 - Added webhook queues

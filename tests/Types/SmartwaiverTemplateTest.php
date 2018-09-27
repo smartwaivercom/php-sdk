@@ -56,5 +56,6 @@ class SmartwaiverTemplateTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($template['publishedOn'], $swTemplate->publishedOn);
         $this->assertEquals($template['webUrl'], $swTemplate->webUrl);
         $this->assertEquals($template['kioskUrl'], $swTemplate->kioskUrl);
+        $this->assertEquals($template['vanityUrls'], $swTemplate->vanityUrls);
     }
 }

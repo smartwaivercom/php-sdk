@@ -35,7 +35,8 @@ class SmartwaiverTemplate extends SmartwaiverType
         'publishedVersion',
         'publishedOn',
         'webUrl',
-        'kioskUrl'
+        'kioskUrl',
+        'vanityUrls'
     ];
 
     /**
@@ -69,6 +70,11 @@ class SmartwaiverTemplate extends SmartwaiverType
     public $kioskUrl;
 
     /**
+     * @var string[] Array of vanity URLs that can be used to access the template
+     */
+    public $vanityUrls;
+
+    /**
      * Create a SmartwaiverWaiver object by providing an array with all the
      * required keys. See REQUIRED_KEYS for that information.
      *
@@ -88,6 +94,7 @@ class SmartwaiverTemplate extends SmartwaiverType
         $this->publishedOn = $template['publishedOn'];
         $this->webUrl = $template['webUrl'];
         $this->kioskUrl = $template['kioskUrl'];
+        $this->vanityUrls = $template['vanityUrls'];
 
     }
 }

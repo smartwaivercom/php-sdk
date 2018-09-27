@@ -895,7 +895,7 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($method, $container[$i]['request']->getMethod());
             $this->assertEquals($paths[$i], $container[$i]['request']->getRequestTarget());
             $this->assertEquals([self::TEST_API_KEY], $container[$i]['request']->getHeader('sw-api-key'));
-            $this->assertEquals(['SmartwaiverSDK:4.2.8-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
+            $this->assertEquals(['SmartwaiverSDK:4.2.9-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
         }
     }
 }

@@ -36,8 +36,11 @@ class SmartwaiverTypes
             'title' => 'Demo Waiver',
             'publishedVersion' => 78015,
             'publishedOn' => '2017-01-24 11:14:25',
-            'webUrl' => 'https://www.smartwaiver.com/w/sprswrvh2keeh/web/',
-            'kioskUrl' => 'https://www.smartwaiver.com/w/sprswrvh2keeh/kiosk/'
+            'webUrl' => 'https://waiver.smartwaiver.com/w/sprswrvh2keeh/web/',
+            'kioskUrl' => 'https://waiver.smartwaiver.com/w/sprswrvh2keeh/kiosk/',
+            'vanityUrls' => [
+                'https://waiver.smartwaiver.com/v/foobar/'
+            ]
         ];
     }
 

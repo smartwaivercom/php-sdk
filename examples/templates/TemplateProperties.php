@@ -39,3 +39,7 @@ echo 'Published On: ' . $template->publishedOn . PHP_EOL;
 echo 'Published Version: ' . $template->publishedVersion . PHP_EOL;
 echo 'Web URL: ' . $template->webUrl . PHP_EOL;
 echo 'Kiosk URL: ' . $template->kioskUrl . PHP_EOL;
+echo 'Vanity URLs: ' . PHP_EOL;
+foreach ($template->vanityUrls as $vanityUrl) {
+    echo "\t" . $vanityUrl . PHP_EOL;
+}

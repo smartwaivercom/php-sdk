@@ -42,7 +42,7 @@ class Smartwaiver
     /**
      * Version of this SDK
      */
-    const VERSION = '4.2.8';
+    const VERSION = '4.2.9';
 
     /**
      * @var Client The Guzzle client used to make requests

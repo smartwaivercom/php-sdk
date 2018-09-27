@@ -2621,6 +2621,7 @@ This class represents a waiver template response from the API.
 | public | `publishedOn` | **string** |
 | public | `webUrl` | **string** |
 | public | `kioskUrl` | **string** |
+| public | `vanityUrls` | **array<mixed,string>** |
 
 ### __construct
 
