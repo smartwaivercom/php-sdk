@@ -18,9 +18,13 @@
 namespace Smartwaiver;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
 
 use Smartwaiver\Exceptions\SmartwaiverSDKException;
+use Smartwaiver\Types\Data\SmartwaiverTemplateData;
+use Smartwaiver\Types\SmartwaiverDynamicProcess;
+use Smartwaiver\Types\SmartwaiverDynamicTemplate;
 use Smartwaiver\Types\SmartwaiverPhotos;
 use Smartwaiver\Types\SmartwaiverSearch;
 use Smartwaiver\Types\SmartwaiverSignatures;
@@ -28,6 +32,7 @@ use Smartwaiver\Types\SmartwaiverTemplate;
 use Smartwaiver\Types\SmartwaiverWaiver;
 use Smartwaiver\Types\SmartwaiverWaiverSummary;
 use Smartwaiver\Types\SmartwaiverWebhook;
+use Smartwaiver\Types\Template\SmartwaiverTemplateConfig;
 use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessage;
 use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessageDelete;
 use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueue;
@@ -42,7 +47,7 @@ class Smartwaiver
     /**
      * Version of this SDK
      */
-    const VERSION = '4.2.9';
+    const VERSION = '4.3.0';
 
     /**
      * @var Client The Guzzle client used to make requests
@@ -620,6 +625,74 @@ class Smartwaiver
     }
 
     /**
+     * Create a dynamic template for your participant to fill out
+     *
+     * @param SmartwaiverTemplateConfig $templateConfig The config for display of the dyanamic template
+     * @param SmartwaiverTemplateData $data The data to fill on the dynamic template
+     * @param integer $expiration The expiration of the dynamic template
+     *
+     * @return SmartwaiverDynamicTemplate An object representing your new dynamic template
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function createDynamicTemplate(SmartwaiverTemplateConfig $templateConfig,
+                                          SmartwaiverTemplateData $data,
+                                          $expiration)
+    {
+        // Send the request and process the response
+        $this->sendPostRequest(SmartwaiverRoutes::createDynamicTemplate(), [
+            'dynamic' => [
+                'expiration' => $expiration,
+                'template' => $templateConfig->apiArray(),
+                'data' => $data->apiArray()
+            ]
+        ]);
+
+        try
+        {
+            // Return info about the newly created dynamic template
+            return new SmartwaiverDynamicTemplate($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Create a dynamic template for your participant to fill out
+     *
+     * @param string $transactionId The transaction ID you are requesting processing of
+     *
+     * @return SmartwaiverDynamicProcess An object representing info about your processed waiver
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function processDynamicTemplate($transactionId)
+    {
+        // Send the request and process the response
+        $this->sendPostRequest(SmartwaiverRoutes::processDynamicTemplate($transactionId), []);
+
+        try
+        {
+            // Return info about the newly created dynamic template
+            return new SmartwaiverDynamicProcess($this->lastResponse->responseData);
+        }
+        catch(InvalidArgumentException $e)
+        {
+            throw new SmartwaiverSDKException(
+                $this->lastResponse->getGuzzleResponse(),
+                $this->lastResponse->getGuzzleBody(),
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
      * Retrieve a list of all waiver templates in the account.
      *
      * @return SmartwaiverRawResponse An object that holds the status code and
@@ -863,6 +936,48 @@ class Smartwaiver
     }
 
     /**
+     * Create a dynamic template for your participant to fill out
+     *
+     * @param integer $expiration The expiration of the dynamic template
+     * @param SmartwaiverTemplateConfig $templateConfig The config for display of the dyanamic template
+     * @param SmartwaiverTemplateData $data The data to fill on the dynamic template
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function createDynamicTemplateRaw(SmartwaiverTemplateConfig $templateConfig,
+                                             SmartwaiverTemplateData $data,
+                                             $expiration)
+    {
+        // Send the request and return the response
+        return $this->sendRawPostRequest(SmartwaiverRoutes::createDynamicTemplate(), [
+            'dynamic' => [
+                'expiration' => $expiration,
+                'template' => $templateConfig->apiArray(),
+                'data' => $data->apiArray()
+            ]
+        ]);
+    }
+
+    /**
+     * Create a dynamic template for your participant to fill out
+     *
+     * @param string $transactionId The transaction ID you are requesting processing of
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     *
+     * @throws SmartwaiverSDKException
+     */
+    public function processDynamicTemplateRaw($transactionId)
+    {
+        // Send the request and return the response
+        return $this->sendRawPostRequest(SmartwaiverRoutes::processDynamicTemplate($transactionId), []);
+    }
+
+    /**
      * Get the SmartwaiverResponse objected created for the most recent API
      * request. Useful for error handling if an exception is thrown.
      *
@@ -898,6 +1013,61 @@ class Smartwaiver
     {
         // Send the request and process the response
         $guzzleResponse = $this->client->request('GET', $url);
+
+        // Return the status code and body of the response
+        return new SmartwaiverRawResponse($guzzleResponse);
+    }
+
+    /**
+     * Send a POST request to the given URL, process the response with a
+     * SmartwaiverResponse object and set that to $this->lastResponse.
+     *
+     * @param string $url  The route to send the POST request to
+     * @param array $data  The data for the POST request
+     *
+     * @throws SmartwaiverSDKException
+     */
+    private function sendPostRequest($url, $data)
+    {
+        // Send the request and process the response
+        try {
+            $guzzleResponse = $this->client->request('POST', $url, ['json' => $data]);
+        } catch (GuzzleException $e) {
+            throw new SmartwaiverSDKException(
+                null,
+                '',
+                $e->getMessage(),
+                1
+            );
+        }
+        $response = new SmartwaiverResponse($guzzleResponse);
+        $this->lastResponse = $response;
+    }
+
+    /**
+     * Send a POST request to the given URL and send back the raw response.
+     *
+     * @param string $url  The route to send the POST request to
+     * @param array $data  The data for the POST request
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     *
+     * @throws SmartwaiverSDKException
+     */
+    private function sendRawPostRequest($url, $data)
+    {
+        // Send the request and process the response
+        try {
+            $guzzleResponse = $this->client->request('POST', $url, ['json' => $data]);
+        } catch (GuzzleException $e) {
+            throw new SmartwaiverSDKException(
+                null,
+                '',
+                $e->getMessage(),
+                1
+            );
+        }
 
         // Return the status code and body of the response
         return new SmartwaiverRawResponse($guzzleResponse);

@@ -28,6 +28,9 @@ use Smartwaiver\SmartwaiverResponse;
 use Smartwaiver\Tests\Factories\APISuccessResponses;
 
 use Smartwaiver\Smartwaiver;
+use Smartwaiver\Types\Data\SmartwaiverTemplateData;
+use Smartwaiver\Types\SmartwaiverDynamicProcess;
+use Smartwaiver\Types\SmartwaiverDynamicTemplate;
 use Smartwaiver\Types\SmartwaiverPhotos;
 use Smartwaiver\Types\SmartwaiverSearch;
 use Smartwaiver\Types\SmartwaiverSignatures;
@@ -35,6 +38,7 @@ use Smartwaiver\Types\SmartwaiverTemplate;
 use Smartwaiver\Types\SmartwaiverWaiver;
 use Smartwaiver\Types\SmartwaiverWaiverSummary;
 use Smartwaiver\Types\SmartwaiverWebhook;
+use Smartwaiver\Types\Template\SmartwaiverTemplateConfig;
 use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessage;
 use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessageDelete;
 use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueues;
@@ -353,15 +357,9 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SmartwaiverWebhook::class, $webhook);
 
         // Check that the right requests were sent
-        $this->assertCount(1, $container);
-        $this->assertEquals('PUT', $container[0]['request']->getMethod());
-        $this->assertEquals('/v4/webhooks/configure', $container[0]['request']->getRequestTarget());
-        $this->assertEquals([self::TEST_API_KEY], $container[0]['request']->getHeader('sw-api-key'));
-        $this->assertEquals(['application/json'], $container[0]['request']->getHeader('Content-Type'));
-        $this->assertEquals(
-            '{"endpoint":"https:\/\/endpoint.example.org","emailValidationRequired":"both"}',
-            $container[0]['request']->getBody()->getContents()
-        );
+        $this->checkPutRequests($container, ['/v4/webhooks/configure'], [
+            '{"endpoint":"https:\/\/endpoint.example.org","emailValidationRequired":"both"}'
+        ]);
     }
 
     /**
@@ -381,15 +379,9 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SmartwaiverWebhook::class, $webhook);
 
         // Check that the right requests were sent
-        $this->assertCount(1, $container);
-        $this->assertEquals('PUT', $container[0]['request']->getMethod());
-        $this->assertEquals('/v4/webhooks/configure', $container[0]['request']->getRequestTarget());
-        $this->assertEquals([self::TEST_API_KEY], $container[0]['request']->getHeader('sw-api-key'));
-        $this->assertEquals(['application/json'], $container[0]['request']->getHeader('Content-Type'));
-        $this->assertEquals(
-            '{"endpoint":"https:\/\/endpoint.example.org","emailValidationRequired":"both"}',
-            $container[0]['request']->getBody()->getContents()
-        );
+        $this->checkPutRequests($container, ['/v4/webhooks/configure'], [
+            '{"endpoint":"https:\/\/endpoint.example.org","emailValidationRequired":"both"}'
+        ]);
     }
 
     /**
@@ -508,6 +500,36 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SmartwaiverWebhookMessageDelete::class, $webhook);
 
         $this->checkDeleteRequests($container, ['/v4/webhooks/queues/template/TestingGUID/MessageID']);
+    }
+
+    /**
+     * Test the createDynamicTemplate function
+     */
+    public function testCreateDynamicTemplate()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::createDynamicTemplate());
+
+        $template = $sw->createDynamicTemplate(new SmartwaiverTemplateConfig(), new SmartwaiverTemplateData(), 300);
+        $this->assertInstanceOf(SmartwaiverDynamicTemplate::class, $template);
+
+        $this->checkPostRequests($container, ['/v4/dynamic/templates'], [
+            '{"dynamic":{"expiration":300,"template":{},"data":{}}}'
+        ]);
+    }
+
+    /**
+     * Test the processDynamicTemplate function
+     */
+    public function testProcessDynamicTemplate()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::dynamicProcess());
+
+        $process = $sw->processDynamicTemplate('transactionId');
+        $this->assertInstanceOf(SmartwaiverDynamicProcess::class, $process);
+
+        $this->checkPostRequests($container, ['/v4/dynamic/process/transactionId'], []);
     }
 
     /**
@@ -726,15 +748,9 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
 
         // Check that the right requests were sent
-        $this->assertCount(1, $container);
-        $this->assertEquals('PUT', $container[0]['request']->getMethod());
-        $this->assertEquals('/v4/webhooks/configure', $container[0]['request']->getRequestTarget());
-        $this->assertEquals([self::TEST_API_KEY], $container[0]['request']->getHeader('sw-api-key'));
-        $this->assertEquals(['application/json'], $container[0]['request']->getHeader('Content-Type'));
-        $this->assertEquals(
-            '{"endpoint":"https:\/\/endpoint.example.org","emailValidationRequired":"both"}',
-            $container[0]['request']->getBody()->getContents()
-        );
+        $this->checkPutRequests($container, ['/v4/webhooks/configure'], [
+            '{"endpoint":"https:\/\/endpoint.example.org","emailValidationRequired":"both"}'
+        ]);
     }
 
     /**
@@ -808,6 +824,36 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the 'createDynamicTemplateRaw' function
+     */
+    public function testCreateDynamicTemplateRaw()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::createDynamicTemplate());
+
+        $response = $sw->createDynamicTemplateRaw(new SmartwaiverTemplateConfig(), new SmartwaiverTemplateData(), 300);
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $this->checkPostRequests($container, ['/v4/dynamic/templates'], [
+            '{"dynamic":{"expiration":300,"template":{},"data":{}}}'
+        ]);
+    }
+
+    /**
+     * Test the 'processDynamicTemplateRaw' function
+     */
+    public function testProcessDynamicTemplateRaw()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::dynamicProcess());
+
+        $response = $sw->processDynamicTemplateRaw('transactionId');
+        $this->assertInstanceOf(SmartwaiverRawResponse::class, $response);
+
+        $this->checkPostRequests($container, ['/v4/dynamic/process/transactionId'], []);
+    }
+
+    /**
      * Test the ability to get the last response the SDK received
      */
     public function testLastResponse()
@@ -868,6 +914,32 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Check that the given container contains the appropriate POST requests
+     * specified in the path array
+     *
+     * @param Request[] $container The container of mocked guzzle requests
+     * @param string[] $paths The paths of the expected requests
+     * @param string[] $data The data of the request
+     */
+    private function checkPostRequests($container, $paths, $data)
+    {
+        $this->checkRequests('POST', $container, $paths, $data);
+    }
+
+    /**
+     * Check that the given container contains the appropriate PUT requests
+     * specified in the path array
+     *
+     * @param Request[] $container The container of mocked guzzle requests
+     * @param string[] $paths The paths of the expected requests
+     * @param string[] $data The data of the request
+     */
+    private function checkPutRequests($container, $paths, $data)
+    {
+        $this->checkRequests('PUT', $container, $paths, $data);
+    }
+
+    /**
      * Check that the given container contains the appropriate DELETE requests
      * specified in the path array
      *
@@ -886,8 +958,9 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
      * @param string $method The type of requests made
      * @param Request[] $container The container of mocked guzzle requests
      * @param string[] $paths The paths of the expected requests
+     * @param string[] $data The data of the request (only used for post/put)
      */
-    private function checkRequests($method, $container, $paths)
+    private function checkRequests($method, $container, $paths, $data = [])
     {
         // Check that the right requests were sent
         $this->assertCount(count($paths), $container);
@@ -895,7 +968,10 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($method, $container[$i]['request']->getMethod());
             $this->assertEquals($paths[$i], $container[$i]['request']->getRequestTarget());
             $this->assertEquals([self::TEST_API_KEY], $container[$i]['request']->getHeader('sw-api-key'));
-            $this->assertEquals(['SmartwaiverSDK:4.2.9-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
+            $this->assertEquals(['SmartwaiverSDK:4.3.0-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
+            if (array_key_exists($i, $data)) {
+                $this->assertEquals($data[$i], $container[$i]['request']->getBody()->getContents());
+            }
         }
     }
 }

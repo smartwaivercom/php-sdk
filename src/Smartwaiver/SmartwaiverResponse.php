@@ -50,7 +50,9 @@ class SmartwaiverResponse
         'api_webhook_account_message_get' => 'api_webhook_account_message_get',
         'api_webhook_template_message_get' => 'api_webhook_template_message_get',
         'api_webhook_account_message_delete' => 'api_webhook_account_message_delete',
-        'api_webhook_template_message_delete' => 'api_webhook_template_message_delete'
+        'api_webhook_template_message_delete' => 'api_webhook_template_message_delete',
+        'dynamic' => 'dynamic',
+        'dynamic_process' => 'dynamic_process'
     ];
 
     /**

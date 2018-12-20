@@ -54,7 +54,7 @@ class APISuccessResponses extends APIResponses
     /**
      * Create a basic template API response (Array version)
      *
-     * @return string The array that can be converted to JSON
+     * @return array The array that can be converted to JSON
      */
     public static function templateArray()
     {
@@ -272,6 +272,32 @@ class APISuccessResponses extends APIResponses
         $response = APIResponses::base();
         $response['type'] = 'api_webhook_template_message_delete';
         $response['api_webhook_template_message_delete'] = SmartwaiverTypes::createWebhookMessageDelete();
+        return json_encode($response);
+    }
+
+    /**
+     * Create a create dynamic template API response
+     *
+     * @return string The JSON response
+     */
+    public static function createDynamicTemplate()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'dynamic';
+        $response['dynamic'] = SmartwaiverTypes::createDynamicTemplate();
+        return json_encode($response);
+    }
+
+    /**
+     * Create a process dynamic template API response
+     *
+     * @return string The JSON response
+     */
+    public static function dynamicProcess()
+    {
+        $response = APIResponses::base();
+        $response['type'] = 'dynamic_process';
+        $response['dynamic_process'] = SmartwaiverTypes::dynamicProcess();
         return json_encode($response);
     }
 }

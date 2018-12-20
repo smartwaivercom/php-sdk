@@ -324,4 +324,31 @@ class SmartwaiverTypes
             'success' => true,
         ];
     }
+
+    /**
+     * Create an input array for a SmartwaiverDynamicTemplate object
+     *
+     * @return array
+     */
+    public static function createDynamicTemplate()
+    {
+        return [
+            'expiration' => 300,
+            'uuid' => 'sprswrvh2keeh',
+            'url' => 'https://waiver.smartwaiver.com/d/sprswrvh2keeh/',
+        ];
+    }
+
+    /**
+     * Create an input array for a SmartwaiverDynamicProcess object
+     *
+     * @return array
+     */
+    public static function dynamicProcess()
+    {
+        return [
+            'transactionId' => 'sprswrvh2keeh',
+            'waiverId' => '6jebdfxzvrdkd',
+        ];
+    }
 }

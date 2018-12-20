@@ -1,5 +1,9 @@
 # Release Notes
 
+## v4.3.0 (2018-12-19)
+
+- Add ability to create and process dynamic documents
+
 ## v4.2.9 (2018-09-27)
 
 - Added vanity URLs to template objects

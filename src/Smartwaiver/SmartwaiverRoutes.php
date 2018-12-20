@@ -42,6 +42,9 @@ class SmartwaiverRoutes
     const ROUTE_WEBHOOK_QUEUE_ACCOUNT = '/v4/webhooks/queues/account';
     const ROUTE_WEBHOOK_QUEUE_TEMPLATE = '/v4/webhooks/queues/template';
 
+    const ROUTE_DYNAMIC_TEMPLATES = '/v4/dynamic/templates';
+    const ROUTE_DYNAMIC_PROCESS = '/v4/dynamic/process';
+
     /**
      * Get the URL to retrieve a list of all waiver templates in the account.
      *
@@ -286,5 +289,27 @@ class SmartwaiverRoutes
     {
         return self::BASE_URI . self::ROUTE_WEBHOOK_QUEUE_TEMPLATE . '/' .
             $templateId . '/' . $messageId;
+    }
+
+    /**
+     * Get the URL to create a new dynamic template
+     *
+     * @return string The URL to create the template.
+     */
+    public static function createDynamicTemplate()
+    {
+        return self::BASE_URI . self::ROUTE_DYNAMIC_TEMPLATES;
+    }
+
+    /**
+     * Get the URL to request the processing of a signed dynamic waiver
+     *
+     * @param string $transactionId  The returned transaction Id after the waiver is signed
+     *
+     * @return string The URL to request processing.
+     */
+    public static function processDynamicTemplate($transactionId)
+    {
+        return self::BASE_URI . self::ROUTE_DYNAMIC_PROCESS . '/' . $transactionId;
     }
 }

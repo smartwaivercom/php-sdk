@@ -244,4 +244,22 @@ class SmartwaiverRoutesTest extends \PHPUnit_Framework_TestCase
         $url = SmartwaiverRoutes::deleteWebhookQueueTemplateMessage('TestingGUID', 'MessageID');
         $this->assertEquals(self::BASE_URI . '/v4/webhooks/queues/template/TestingGUID/MessageID', $url);
     }
+
+    /**
+     * Test create dynamic template route
+     */
+    public function testCreateDynamicTemplate()
+    {
+        $url = SmartwaiverRoutes::createDynamicTemplate();
+        $this->assertEquals(self::BASE_URI . '/v4/dynamic/templates', $url);
+    }
+
+    /**
+     * Test process dynamic waiver route
+     */
+    public function testProcessDynamicTemplate()
+    {
+        $url = SmartwaiverRoutes::processDynamicTemplate('TestingGUID');
+        $this->assertEquals(self::BASE_URI . '/v4/dynamic/process/TestingGUID', $url);
+    }
 }
