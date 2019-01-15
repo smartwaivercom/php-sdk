@@ -1,5 +1,10 @@
 # Release Notes
 
+## v4.3.1 (2019-01-15)
+
+- Add standard fields to dynamic document data object
+- Add route to delete account webhook setting
+
 ## v4.3.0 (2018-12-19)
 
 - Add ability to create and process dynamic documents

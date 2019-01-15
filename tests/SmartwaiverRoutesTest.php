@@ -189,6 +189,15 @@ class SmartwaiverRoutesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test delete webhook config route
+     */
+    public function testDeleteWebhookConfig()
+    {
+        $url = SmartwaiverRoutes::deleteWebhookConfig();
+        $this->assertEquals(self::BASE_URI . '/v4/webhooks/configure', $url);
+    }
+
+    /**
      * Test webhook queues route
      */
     public function testWebhookQueues()

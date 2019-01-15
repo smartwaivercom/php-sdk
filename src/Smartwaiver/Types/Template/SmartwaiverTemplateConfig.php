@@ -226,6 +226,15 @@ class SmartwaiverTemplateConfig extends SmartwaiverType implements SmartwaiverIn
         return $ret;
     }
 
+    /**
+     * Helper function to create the full array
+     *
+     * @param array $apiArray The array to add to
+     * @param SmartwaiverInputType $object The object that contains the info we need to add to the api array
+     * @param string $key The key to store the object info under in the api array
+     *
+     * @return array The new api array
+     */
     private function apiArrayHelper($apiArray, SmartwaiverInputType $object, $key) {
         $objectApiArray = $object->apiArray();
         if (count($objectApiArray) > 0) {

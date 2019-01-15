@@ -341,4 +341,39 @@ class SmartwaiverTemplateDataTest extends \PHPUnit_Framework_TestCase
         $data->setGuardian('TestFirst', 'TestLast', null, null, null, null, null, false);
         $this->assertEquals($expected, $data->apiArray());
     }
+
+    /**
+     * Test adding standard fields
+     */
+    public function testStandardFields()
+    {
+        $expected = new \ArrayObject();
+        $expected['addressLineOne'] = 'Test1';
+        $expected['addressLineTwo'] = 'Test2';
+        $expected['addressCountry'] = 'Test3';
+        $expected['addressState'] = 'Test4';
+        $expected['addressZip'] = 'Test5';
+        $expected['email'] = 'Test6';
+        $expected['emergencyContactName'] = 'Test7';
+        $expected['emergencyContactPhone'] = 'Test8';
+        $expected['insuranceCarrier'] = 'Test9';
+        $expected['insurancePolicyNumber'] = 'Test10';
+        $expected['driversLicenseState'] = 'Test11';
+        $expected['driversLicenseNumber'] = 'Test12';
+
+        $data = new SmartwaiverTemplateData();
+        $data->addressLineOne = 'Test1';
+        $data->addressLineTwo = 'Test2';
+        $data->addressCountry = 'Test3';
+        $data->addressState = 'Test4';
+        $data->addressZip = 'Test5';
+        $data->email = 'Test6';
+        $data->emergencyContactName = 'Test7';
+        $data->emergencyContactPhone = 'Test8';
+        $data->insuranceCarrier = 'Test9';
+        $data->insurancePolicyNumber = 'Test10';
+        $data->driversLicenseState = 'Test11';
+        $data->driversLicenseNumber = 'Test12';
+        $this->assertEquals($expected, $data->apiArray());
+    }
 }

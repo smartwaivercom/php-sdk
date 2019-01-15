@@ -15,21 +15,15 @@
  * under the License.
  */
 
-namespace Smartwaiver\Types;
+require_once __DIR__ . '/../../../../autoload.php';
 
-/**
- * Class SmartwaiverTemplateType
- *
- * Defines the requirements for an input class to the API.
- *
- * @package Smartwaiver\Types
- */
-interface SmartwaiverInputType
-{
-    /**
-     * The function that all input types use to create the object in array form
-     *
-     * @return array The object in array form
-     */
-    function apiArray();
-}
+use Smartwaiver\Smartwaiver;
+
+// The API Key for your account
+$apiKey = '[INSERT API KEY]';
+
+// Set up your Smartwaiver connection using your API Key
+$sw = new Smartwaiver($apiKey);
+
+// Delete the current webhook settings
+$sw->deleteWebhookConfig();

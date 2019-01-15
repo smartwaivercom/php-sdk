@@ -329,9 +329,9 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the getWebhook function
+     * Test the getWebhookConfig function
      */
-    public function testGetWebhook()
+    public function testGetWebhookConfig()
     {
         $container = [];
         $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhooks());
@@ -360,6 +360,19 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
         $this->checkPutRequests($container, ['/v4/webhooks/configure'], [
             '{"endpoint":"https:\/\/endpoint.example.org","emailValidationRequired":"both"}'
         ]);
+    }
+
+    /**
+     * Test the deleteWebhookConfig function
+     */
+    public function testDeleteWebhookConfig()
+    {
+        $container = [];
+        $sw = $this->createMockedSmartwaiver($container, APISuccessResponses::webhooks());
+
+        $sw->deleteWebhookConfig();
+
+        $this->checkDeleteRequests($container, ['/v4/webhooks/configure']);
     }
 
     /**
@@ -968,7 +981,7 @@ class SmartwaiverTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($method, $container[$i]['request']->getMethod());
             $this->assertEquals($paths[$i], $container[$i]['request']->getRequestTarget());
             $this->assertEquals([self::TEST_API_KEY], $container[$i]['request']->getHeader('sw-api-key'));
-            $this->assertEquals(['SmartwaiverSDK:4.3.0-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
+            $this->assertEquals(['SmartwaiverSDK:4.3.1-php:'.phpversion()], $container[$i]['request']->getHeader('User-Agent'));
             if (array_key_exists($i, $data)) {
                 $this->assertEquals($data[$i], $container[$i]['request']->getBody()->getContents());
             }

@@ -84,6 +84,13 @@ $data = new SmartwaiverTemplateData();
 // Add a participant
 $data->addParticipant('Kyle', 'Smith', null, null, null, '1986-01-02');
 
+// Set the standard fields
+$data->addressLineOne = '123 Main St.';
+$data->addressLineTwo = 'Suite 2';
+$data->addressCity = 'Bend';
+$data->addressZip = '97701';
+$data->email = 'test@example.org';
+
 // One final piece, how long do we want our template to last if nobody fills it in (this is in seconds)
 $expiration = 600;
 

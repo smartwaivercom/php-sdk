@@ -15,6 +15,7 @@ Table of Contents
     * [Retrieve Photos on a Waiver](#retrieve-photos-on-a-waiver)
     * [Search for Waivers](#search-for-waivers)
     * [Retrieve/Set Webhook Config](#retrieveset-webhook-configuration)
+    * [Retrieve Messages From Webhook Queues](#retrieve-messages-from-webhook-queues)
   * [Exception Handling](#exception-handling)
     * [Status Codes](#status-codes)
   * [Advanced](#advanced)
@@ -29,7 +30,10 @@ Table of Contents
     * [Smartwaiver/SmartwaiverRawResponse](#smartwaiversmartwaiverrawresponse)
     * [Smartwaiver/SmartwaiverResponse](#smartwaiversmartwaiverresponse)
     * [Smartwaiver/SmartwaiverRoutes](#smartwaiversmartwaiverroutes)
+    * [Smartwaiver/Types/Data/SmartwaiverTemplateData](#smartwaivertypesdatasmartwaivertemplatedata)
     * [Smartwaiver/Types/SmartwaiverCustomField](#smartwaivertypessmartwaivercustomfield)
+    * [Smartwaiver/Types/SmartwaiverDynamicProcess](#smartwaivertypessmartwaiverdynamicprocess)
+    * [Smartwaiver/Types/SmartwaiverDynamicTemplate](#smartwaivertypessmartwaiverdynamictemplate)
     * [Smartwaiver/Types/SmartwaiverFlag](#smartwaivertypessmartwaiverflag)
     * [Smartwaiver/Types/SmartwaiverGuardian](#smartwaivertypessmartwaiverguardian)
     * [Smartwaiver/Types/SmartwaiverParticipant](#smartwaivertypessmartwaiverparticipant)
@@ -42,6 +46,18 @@ Table of Contents
     * [Smartwaiver/Types/SmartwaiverWaiver](#smartwaivertypessmartwaiverwaiver)
     * [Smartwaiver/Types/SmartwaiverWaiverSummary](#smartwaivertypessmartwaiverwaiversummary)
     * [Smartwaiver/Types/SmartwaiverWebhook](#smartwaivertypessmartwaiverwebhook)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateBody](#smartwaivertypestemplatesmartwaivertemplatebody)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateCompletion](#smartwaivertypestemplatesmartwaivertemplatecompletion)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateConfig](#smartwaivertypestemplatesmartwaivertemplateconfig)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateElectronicConsent](#smartwaivertypestemplatesmartwaivertemplateelectronicconsent)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateGuardian](#smartwaivertypestemplatesmartwaivertemplateguardian)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateHeader](#smartwaivertypestemplatesmartwaivertemplateheader)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateMeta](#smartwaivertypestemplatesmartwaivertemplatemeta)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateParticipants](#smartwaivertypestemplatesmartwaivertemplateparticipants)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateProcessing](#smartwaivertypestemplatesmartwaivertemplateprocessing)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateSignatures](#smartwaivertypestemplatesmartwaivertemplatesignatures)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateStandardQuestions](#smartwaivertypestemplatesmartwaivertemplatestandardquestions)
+    * [Smartwaiver/Types/Template/SmartwaiverTemplateStyling](#smartwaivertypestemplatesmartwaivertemplatestyling)
     * [Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessage](#smartwaivertypeswebhookqueuessmartwaiverwebhookmessage)
     * [Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessageDelete](#smartwaivertypeswebhookqueuessmartwaiverwebhookmessagedelete)
     * [Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessagePayload](#smartwaivertypeswebhookqueuessmartwaiverwebhookmessagepayload)
@@ -501,8 +517,16 @@ echo 'Endpoint: ' . $newWebhook->endpoint . PHP_EOL;
 echo 'EmailValidationRequired: ' . $newWebhook->emailValidationRequired . PHP_EOL;
 ```
 
-This code is also provided in [RetrieveWebhooks.php](examples/webhooks/RetrieveWebhooks.php)
-and [SetWebhooks.php](examples/webhooks/SetWebhooks.php)
+If you wish to remove a webhook completely from the account you may also do that like this:
+
+```php
+$sw->deleteWebhookConfig();
+```
+
+
+This code is also provided in [RetrieveWebhooks.php](examples/webhooks/RetrieveWebhooks.php),
+[SetWebhooks.php](examples/webhooks/SetWebhooks.php),
+and [DeleteWebhooks.php](examples/webhooks/DeleteWebhooks.php)
 
 
 Retrieve Messages From Webhook Queues
@@ -1390,6 +1414,50 @@ Whether the message was deleted
 
 ---
 
+### createDynamicTemplate
+
+Create a dynamic template for your participant to fill out
+
+```php
+Smartwaiver::createDynamicTemplate( \Smartwaiver\Types\Template\SmartwaiverTemplateConfig $templateConfig, \Smartwaiver\Types\Data\SmartwaiverTemplateData $data, integer $expiration ): \Smartwaiver\Types\SmartwaiverDynamicTemplate
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$templateConfig` | **\Smartwaiver\Types\Template\SmartwaiverTemplateConfig** | The config for display of the dyanamic template |
+| `$data` | **\Smartwaiver\Types\Data\SmartwaiverTemplateData** | The data to fill on the dynamic template |
+| `$expiration` | **integer** | The expiration of the dynamic template |
+
+
+**Return Value:**
+
+An object representing your new dynamic template
+
+---
+
+### processDynamicTemplate
+
+Create a dynamic template for your participant to fill out
+
+```php
+Smartwaiver::processDynamicTemplate( string $transactionId ): \Smartwaiver\Types\SmartwaiverDynamicProcess
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$transactionId` | **string** | The transaction ID you are requesting processing of |
+
+
+**Return Value:**
+
+An object representing info about your processed waiver
+
+---
+
 ### getWaiverTemplatesRaw
 
 Retrieve a list of all waiver templates in the account.
@@ -1710,6 +1778,52 @@ Smartwaiver::deleteWebhookQueueTemplateMessageRaw( string $templateId, string $m
 |-----------|------|-------------|
 | `$templateId` | **string** | The template ID to retrieve the message from |
 | `$messageId` | **string** | The message to delete from the queue |
+
+
+**Return Value:**
+
+An object that holds the status code and
+unprocessed json.
+
+---
+
+### createDynamicTemplateRaw
+
+Create a dynamic template for your participant to fill out
+
+```php
+Smartwaiver::createDynamicTemplateRaw( \Smartwaiver\Types\Template\SmartwaiverTemplateConfig $templateConfig, \Smartwaiver\Types\Data\SmartwaiverTemplateData $data, integer $expiration ): \Smartwaiver\SmartwaiverRawResponse
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$templateConfig` | **\Smartwaiver\Types\Template\SmartwaiverTemplateConfig** | The config for display of the dyanamic template |
+| `$data` | **\Smartwaiver\Types\Data\SmartwaiverTemplateData** | The data to fill on the dynamic template |
+| `$expiration` | **integer** | The expiration of the dynamic template |
+
+
+**Return Value:**
+
+An object that holds the status code and
+unprocessed json.
+
+---
+
+### processDynamicTemplateRaw
+
+Create a dynamic template for your participant to fill out
+
+```php
+Smartwaiver::processDynamicTemplateRaw( string $transactionId ): \Smartwaiver\SmartwaiverRawResponse
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$transactionId` | **string** | The transaction ID you are requesting processing of |
 
 
 **Return Value:**
@@ -2174,6 +2288,130 @@ The URL to retrieve the information.
 
 ---
 
+### createDynamicTemplate
+
+Get the URL to create a new dynamic template
+
+```php
+SmartwaiverRoutes::createDynamicTemplate(  ): string
+```
+
+* This method is **static**.
+
+**Return Value:**
+
+The URL to create the template.
+
+---
+
+### processDynamicTemplate
+
+Get the URL to request the processing of a signed dynamic waiver
+
+```php
+SmartwaiverRoutes::processDynamicTemplate( string $transactionId ): string
+```
+
+* This method is **static**.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$transactionId` | **string** | The returned transaction Id after the waiver is signed |
+
+
+**Return Value:**
+
+The URL to request processing.
+
+---
+
+## Smartwaiver/Types/Data/SmartwaiverTemplateData
+
+Class SmartwaiverTemplateData
+
+This class the settings for the body section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Data\SmartwaiverTemplateData
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `adult` | **boolean** |
+| public | `addressLineOne` | **string** |
+| public | `addressLineTwo` | **string** |
+| public | `addressCountry` | **string** |
+| public | `addressCity` | **string** |
+| public | `addressState` | **string** |
+| public | `addressZip` | **string** |
+| public | `email` | **string** |
+| public | `emergencyContactName` | **string** |
+| public | `emergencyContactPhone` | **string** |
+| public | `insuranceCarrier` | **string** |
+| public | `insurancePolicyNumber` | **string** |
+| public | `driversLicenseState` | **string** |
+| public | `driversLicenseNumber` | **string** |
+| protected | `participants` | **array** |
+| protected | `guardian` | **array** |
+
+### addParticipant
+
+Add a participant to the end of the participant array. First Name and Last Name are required, everything else is
+optional.
+
+```php
+SmartwaiverTemplateData::addParticipant( string $firstName, string $lastName, string|null $middleName = null, string|null $phone = null, string|null $gender = null, string|null $dob = null )
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$firstName` | **string** | The first name of the participant |
+| `$lastName` | **string** | The last name of the participant |
+| `$middleName` | **string&#124;null** | The middle name of the participant |
+| `$phone` | **string&#124;null** | The phone number of the participant |
+| `$gender` | **string&#124;null** | The gender of the participant |
+| `$dob` | **string&#124;null** | The DOB of the participant in ISO 8601 format. |
+
+---
+
+### setGuardian
+
+Set prefill data for the guardian
+
+```php
+SmartwaiverTemplateData::setGuardian( string $firstName, string $lastName, string|null $middleName = null, string|null $relationship = null, string|null $phone = null, string|null $gender = null, string|null $dob = null, boolean|null $participant = null )
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$firstName` | **string** | The first name of the guardian |
+| `$lastName` | **string** | The last name of the guardian |
+| `$middleName` | **string&#124;null** | The middle name of the guardian |
+| `$relationship` | **string&#124;null** | The relationship of the guardian to the minor |
+| `$phone` | **string&#124;null** | The phone number of the guardian |
+| `$gender` | **string&#124;null** | The gender of the guardian |
+| `$dob` | **string&#124;null** | The DOB of the guardian |
+| `$participant` | **boolean&#124;null** | Whether the guardian is also a participant or not |
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateData::apiArray(  ): \ArrayObject
+```
+---
+
 ## Smartwaiver/Types/SmartwaiverCustomField
 
 Class SmartwaiverCustomField
@@ -2216,6 +2454,107 @@ Retrieve the input array this object was constructed from
 
 ```php
 SmartwaiverCustomField::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+## Smartwaiver/Types/SmartwaiverDynamicProcess
+
+Class SmartwaiverDynamicProcess
+
+This class represents a newly created dynamic template response.
+
+* Full name: \Smartwaiver\Types\SmartwaiverDynamicProcess
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `transactionId` | **string** |
+| public | `waiverId` | **string** |
+
+### __construct
+
+Create a SmartwaiverDynamicProcess object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverDynamicProcess::__construct( array $dynamicProcess )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$dynamicProcess` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverDynamicProcess::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+## Smartwaiver/Types/SmartwaiverDynamicTemplate
+
+Class SmartwaiverDynamicTemplate
+
+This class represents a newly created dynamic template response.
+
+* Full name: \Smartwaiver\Types\SmartwaiverDynamicTemplate
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `expiration` | **integer** |
+| public | `uuid` | **string** |
+| public | `url` | **string** |
+
+### __construct
+
+Create a SmartwaiverDynamicTemplate object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverDynamicTemplate::__construct( array $dynamicTemplate )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$dynamicTemplate` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverDynamicTemplate::getArrayInput(  ): array
 ```
 
 **Return Value:**
@@ -2902,6 +3241,765 @@ SmartwaiverWebhook::getArrayInput(  ): array
 
 The input array
 
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateBody
+
+Class SmartwaiverTemplateBody
+
+This class the settings for the body section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateBody
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `text` | **string** |
+
+### __construct
+
+Create a SmartwaiverTemplateBody object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateBody::__construct( array $body = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$body` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateBody::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateBody::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateCompletion
+
+Class SmartwaiverTemplateCompletion
+
+This class the settings for the completion section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateCompletion
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `redirectSuccess` | **string** |
+| public | `redirectCancel` | **string** |
+
+### __construct
+
+Create a SmartwaiverTemplateCompletion object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateCompletion::__construct( array $completion = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$completion` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateCompletion::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateCompletion::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateConfig
+
+Class SmartwaiverTemplateConfig
+
+This class the settings for the config section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateConfig
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `meta` | **\Smartwaiver\Types\Template\SmartwaiverTemplateMeta** |
+| public | `header` | **\Smartwaiver\Types\Template\SmartwaiverTemplateHeader** |
+| public | `body` | **\Smartwaiver\Types\Template\SmartwaiverTemplateBody** |
+| public | `participants` | **\Smartwaiver\Types\Template\SmartwaiverTemplateParticipants** |
+| public | `standardQuestions` | **\Smartwaiver\Types\Template\SmartwaiverTemplateStandardQuestions** |
+| public | `guardian` | **\Smartwaiver\Types\Template\SmartwaiverTemplateGuardian** |
+| public | `electronicConsent` | **\Smartwaiver\Types\Template\SmartwaiverTemplateElectronicConsent** |
+| public | `styling` | **\Smartwaiver\Types\Template\SmartwaiverTemplateStyling** |
+| public | `completion` | **\Smartwaiver\Types\Template\SmartwaiverTemplateCompletion** |
+| public | `signatures` | **\Smartwaiver\Types\Template\SmartwaiverTemplateSignatures** |
+| public | `processing` | **\Smartwaiver\Types\Template\SmartwaiverTemplateProcessing** |
+
+### __construct
+
+Create a SmartwaiverTemplateConfig object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateConfig::__construct( array $config = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$config` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateConfig::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateConfig::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateElectronicConsent
+
+Class SmartwaiverTemplateElectronicConsent
+
+This class the settings for the electronicConsent section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateElectronicConsent
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `title` | **string** |
+| public | `verbiage` | **string** |
+
+### __construct
+
+Create a SmartwaiverTemplateElectronicConsent object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateElectronicConsent::__construct( array $electronicConsent = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$electronicConsent` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateElectronicConsent::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateElectronicConsent::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateGuardian
+
+Class SmartwaiverTemplateGuardian
+
+This class the settings for the guardian section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateGuardian
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `verbiage` | **string** |
+| public | `verbiageParticipantAddendum` | **string** |
+| public | `label` | **string** |
+| public | `relationship` | **boolean** |
+| public | `ageVerification` | **boolean** |
+
+### __construct
+
+Create a SmartwaiverTemplateGuardian object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateGuardian::__construct( array $guardian = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$guardian` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateGuardian::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateGuardian::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateHeader
+
+Class SmartwaiverTemplateHeader
+
+This class the settings for the header section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateHeader
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `logoImage` | **string** |
+| public | `text` | **string** |
+
+### __construct
+
+Create a SmartwaiverTemplateHeader object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateHeader::__construct( array $header = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$header` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateHeader::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateHeader::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateMeta
+
+Class SmartwaiverTemplateMeta
+
+This class the settings for the meta section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateMeta
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `title` | **string** |
+| public | `language` | **string** |
+
+### __construct
+
+Create a SmartwaiverTemplateMeta object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateMeta::__construct( array $meta = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$meta` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateMeta::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateMeta::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateParticipants
+
+Class SmartwaiverTemplateParticipants
+
+This class the settings for the participants section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateParticipants
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `adults` | **boolean** |
+| public | `minorsEnabled` | **boolean** |
+| public | `multipleMinors` | **boolean** |
+| public | `minorsWithoutAdults` | **boolean** |
+| public | `adultsAndMinors` | **boolean** |
+| public | `ageOfMajority` | **integer** |
+| public | `participantLabel` | **string** |
+| public | `participatingText` | **string** |
+| public | `middleName` | **boolean** |
+| public | `phone` | **boolean** |
+| public | `gender` | **boolean** |
+| public | `dobType` | **string** |
+
+### __construct
+
+Create a SmartwaiverTemplateParticipants object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateParticipants::__construct( array $participants = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$participants` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateParticipants::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateParticipants::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateProcessing
+
+Class SmartwaiverTemplateProcessing
+
+This class the settings for the processing section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateProcessing
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `emailBusinessName` | **string** |
+| public | `emailReplyTo` | **string** |
+| public | `emailCustomTextEnabled` | **boolean** |
+| public | `emailCustomTextWeb` | **string** |
+| public | `emailCCEnabled` | **boolean** |
+| public | `emailCCWebEnabled` | **boolean** |
+| public | `emailCCEmails` | **array** |
+| public | `emailIncludeBarcodes` | **boolean** |
+
+### __construct
+
+Create a SmartwaiverTemplateProcessing object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateProcessing::__construct( array $processing = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$processing` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateProcessing::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateProcessing::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateSignatures
+
+Class SmartwaiverTemplateSignatures
+
+This class the settings for the signatures section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateSignatures
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `type` | **string** |
+| public | `minor` | **boolean** |
+| public | `defaultChoice` | **string** |
+
+### __construct
+
+Create a SmartwaiverTemplateSignatures object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateSignatures::__construct( array $signatures = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$signatures` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateSignatures::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateSignatures::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateStandardQuestions
+
+Class SmartwaiverTemplateStandardQuestions
+
+This class the settings for the standardQuestions section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateStandardQuestions
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `addressEnabled` | **boolean** |
+| public | `addressRequired` | **boolean** |
+| public | `addressDefaultCountry` | **string** |
+| public | `addressDefaultState` | **string** |
+| public | `emailVerification` | **boolean** |
+| public | `emailMarketingEnabled` | **boolean** |
+| public | `emailMarketingOptInText` | **string** |
+| public | `emailMarketingDefaultChecked` | **boolean** |
+| public | `emergencyContactEnabled` | **boolean** |
+| public | `insuranceEnabled` | **boolean** |
+| public | `idCardEnabled` | **boolean** |
+
+### __construct
+
+Create a SmartwaiverTemplateStandardQuestions object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateStandardQuestions::__construct( array $standardQuestions = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$standardQuestions` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateStandardQuestions::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateStandardQuestions::apiArray(  ): \ArrayObject
+```
+---
+
+## Smartwaiver/Types/Template/SmartwaiverTemplateStyling
+
+Class SmartwaiverTemplateStyling
+
+This class the settings for the styling section of a Smartwaiver Template
+
+* Full name: \Smartwaiver\Types\Template\SmartwaiverTemplateStyling
+* Parent class: \Smartwaiver\Types\SmartwaiverType
+* This class implements: \Smartwaiver\Types\SmartwaiverInputType
+
+
+**Properties:**
+
+| Visibility | Name | Type |
+|------------|------|------|
+| public | `style` | **string** |
+| public | `customBackground` | **string** |
+| public | `customBorder` | **string** |
+| public | `customShadow` | **string** |
+
+### __construct
+
+Create a SmartwaiverTemplateStyling object by providing an array with all
+the required keys. See REQUIRED_KEYS for that information.
+
+```php
+SmartwaiverTemplateStyling::__construct( array $styling = array() )
+```
+
+Checks that all the required keys for the given object type exist
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$styling` | **array** | The input array containing all the information |
+
+---
+
+### getArrayInput
+
+Retrieve the input array this object was constructed from
+
+```php
+SmartwaiverTemplateStyling::getArrayInput(  ): array
+```
+
+**Return Value:**
+
+The input array
+
+---
+
+### apiArray
+
+Return the array to be passed to the api representing this object
+
+```php
+SmartwaiverTemplateStyling::apiArray(  ): \ArrayObject
+```
 ---
 
 ## Smartwaiver/Types/WebhookQueues/SmartwaiverWebhookMessage

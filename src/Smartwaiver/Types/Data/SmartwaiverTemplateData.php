@@ -33,13 +33,52 @@ class SmartwaiverTemplateData implements SmartwaiverInputType
      */
     public $adult;
 
+    /** @var string Data to fill into the address line one */
+    public $addressLineOne;
+
+    /** @var string Data to fill into the address line two */
+    public $addressLineTwo;
+
+    /** @var string Data to fill into the address country */
+    public $addressCountry;
+
+    /** @var string Data to fill into the address city */
+    public $addressCity;
+
+    /** @var string Data to fill into the address state */
+    public $addressState;
+
+    /** @var string Data to fill into the address zip */
+    public $addressZip;
+
+    /** @var string Data to fill into the email */
+    public $email;
+
+    /** @var string Data to fill into the emergency contact name */
+    public $emergencyContactName;
+
+    /** @var string Data to fill into the emergency contact phone */
+    public $emergencyContactPhone;
+
+    /** @var string Data to fill into the insurance carrier */
+    public $insuranceCarrier;
+
+    /** @var string Data to fill into the insurance policy number */
+    public $insurancePolicyNumber;
+
+    /** @var string Data to fill into the drivers license state */
+    public $driversLicenseState;
+
+    /** @var string Data to fill into the drivers license number */
+    public $driversLicenseNumber;
+
     /**
      * @var array An array of participants that are on the waiver
      */
     protected $participants;
 
     /**
-     * @var
+     * @var array An associative array of the guardian information
      */
     protected $guardian;
 
@@ -148,6 +187,66 @@ class SmartwaiverTemplateData implements SmartwaiverInputType
         // Guardian
         if (isset($this->guardian)) {
             $ret['guardian'] = $this->guardian;
+        }
+
+        // Address Line One
+        if (isset($this->addressLineOne) && $this->addressLineOne != '') {
+            $ret['addressLineOne'] = $this->addressLineOne;
+        }
+
+        // Address Line Two
+        if (isset($this->addressLineTwo) && $this->addressLineTwo != '') {
+            $ret['addressLineTwo'] = $this->addressLineTwo;
+        }
+
+        // Address Country
+        if (isset($this->addressCountry) && $this->addressCountry != '') {
+            $ret['addressCountry'] = $this->addressCountry;
+        }
+
+        // Address State
+        if (isset($this->addressState) && $this->addressState != '') {
+            $ret['addressState'] = $this->addressState;
+        }
+
+        // Address Zip
+        if (isset($this->addressZip) && $this->addressZip != '') {
+            $ret['addressZip'] = $this->addressZip;
+        }
+
+        // Email
+        if (isset($this->email) && $this->email != '') {
+            $ret['email'] = $this->email;
+        }
+
+        // Emergency Contact Name
+        if (isset($this->emergencyContactName) && $this->emergencyContactName != '') {
+            $ret['emergencyContactName'] = $this->emergencyContactName;
+        }
+
+        // Emergency Contact Phone
+        if (isset($this->emergencyContactPhone) && $this->emergencyContactPhone != '') {
+            $ret['emergencyContactPhone'] = $this->emergencyContactPhone;
+        }
+
+        // Insurance Carrier
+        if (isset($this->insuranceCarrier) && $this->insuranceCarrier != '') {
+            $ret['insuranceCarrier'] = $this->insuranceCarrier;
+        }
+
+        // Insurance Policy Number
+        if (isset($this->insurancePolicyNumber) && $this->insurancePolicyNumber != '') {
+            $ret['insurancePolicyNumber'] = $this->insurancePolicyNumber;
+        }
+
+        // Driver's License State
+        if (isset($this->driversLicenseState) && $this->driversLicenseState != '') {
+            $ret['driversLicenseState'] = $this->driversLicenseState;
+        }
+
+        // Driver's License Number
+        if (isset($this->driversLicenseNumber) && $this->driversLicenseNumber != '') {
+            $ret['driversLicenseNumber'] = $this->driversLicenseNumber;
         }
 
         return $ret;

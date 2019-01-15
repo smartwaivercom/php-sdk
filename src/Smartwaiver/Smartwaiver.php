@@ -47,7 +47,7 @@ class Smartwaiver
     /**
      * Version of this SDK
      */
-    const VERSION = '4.3.0';
+    const VERSION = '4.3.1';
 
     /**
      * @var Client The Guzzle client used to make requests
@@ -453,6 +453,15 @@ class Smartwaiver
                 $e->getMessage()
             );
         }
+    }
+
+    /**
+     * Delete the current webhook configuration for the account
+     */
+    public function deleteWebhookConfig()
+    {
+        $url = SmartwaiverRoutes::deleteWebhookConfig();
+        $this->sendDeleteRequest($url);
     }
 
     /**
@@ -866,6 +875,18 @@ class Smartwaiver
     }
 
     /**
+     * Delete the current webhook configuration for the account
+     *
+     * @return SmartwaiverRawResponse An object that holds the status code and
+     * unprocessed json.
+     */
+    public function deleteWebhookConfigRaw()
+    {
+        $url = SmartwaiverRoutes::deleteWebhookConfig();
+        return $this->sendRawDeleteRequest($url);
+    }
+
+    /**
      * Retrieve the current message counts for all webhook queues enabled
      *
      * @return SmartwaiverRawResponse An object that holds the status code and
@@ -938,9 +959,9 @@ class Smartwaiver
     /**
      * Create a dynamic template for your participant to fill out
      *
-     * @param integer $expiration The expiration of the dynamic template
      * @param SmartwaiverTemplateConfig $templateConfig The config for display of the dyanamic template
      * @param SmartwaiverTemplateData $data The data to fill on the dynamic template
+     * @param integer $expiration The expiration of the dynamic template
      *
      * @return SmartwaiverRawResponse An object that holds the status code and
      * unprocessed json.

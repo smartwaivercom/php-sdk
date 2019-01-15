@@ -228,6 +228,16 @@ class SmartwaiverRoutes
     }
 
     /**
+     * Get the URL to delete the current webhook configuration for the account
+     *
+     * @return string The URL to use.
+     */
+    public static function deleteWebhookConfig()
+    {
+        return self::BASE_URI . self::ROUTE_WEBHOOKS;
+    }
+
+    /**
      * Get the URL to retrieve information about state of all webhook queues
      *
      * @return string The URL to retrieve the information.
