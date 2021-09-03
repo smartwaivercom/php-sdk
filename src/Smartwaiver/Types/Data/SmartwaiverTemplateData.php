@@ -116,7 +116,7 @@ class SmartwaiverTemplateData implements SmartwaiverInputType
                 $participant['dob'] = $dob;
             }
 
-            if (!isset($this->participants) || is_array($this->participants)) $this->participants = [];
+            if (!isset($this->participants) || !is_array($this->participants)) $this->participants = [];
             array_push($this->participants, $participant);
         }
     }
