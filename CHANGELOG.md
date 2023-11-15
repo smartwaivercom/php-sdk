@@ -32,3 +32,9 @@
 - Added new route to retrieve waiver photos ([Example](https://github.com/smartwaivercom/php-sdk#retrieve-photos-on-a-waiver))
 - Added new search route ([Example](https://github.com/smartwaivercom/php-sdk#search-for-waivers))
 - Added first and last name query parameters to waivers route ([Example](https://github.com/smartwaivercom/php-sdk#list-all-signed-waivers))
+
+
+## v4.2.4 (2023-11-15)
+
+- Updated PHP to use 7.4
+- Updated Guzzle to use ^7.0

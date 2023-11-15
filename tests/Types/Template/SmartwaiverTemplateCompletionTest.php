@@ -24,7 +24,7 @@ use Smartwaiver\Types\Template\SmartwaiverTemplateCompletion;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverTemplateCompletionTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverTemplateCompletionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether no required keys error is generated
@@ -32,6 +32,7 @@ class SmartwaiverTemplateCompletionTest extends \PHPUnit_Framework_TestCase
     public function testRequiredKeysEmpty()
     {
         $completion = new SmartwaiverTemplateCompletion();
+        $this->assertTrue(true);
     }
 
     /**

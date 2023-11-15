@@ -26,7 +26,7 @@ use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessageDelete;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverWebhookMessageDeleteTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverWebhookMessageDeleteTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether a required keys error is generated correctly

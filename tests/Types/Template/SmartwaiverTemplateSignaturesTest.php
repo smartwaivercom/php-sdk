@@ -24,7 +24,7 @@ use Smartwaiver\Types\Template\SmartwaiverTemplateSignatures;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverTemplateSignaturesTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverTemplateSignaturesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether no required keys error is generated
@@ -32,6 +32,7 @@ class SmartwaiverTemplateSignaturesTest extends \PHPUnit_Framework_TestCase
     public function testRequiredKeysEmpty()
     {
         $signatures = new SmartwaiverTemplateSignatures();
+        $this->assertTrue(true);
     }
 
     /**

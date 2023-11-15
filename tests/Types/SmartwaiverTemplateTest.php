@@ -26,7 +26,7 @@ use Smartwaiver\Types\SmartwaiverTemplate;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverTemplateTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverTemplateTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether a required keys error is generated correctly

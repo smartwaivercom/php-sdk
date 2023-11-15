@@ -27,7 +27,7 @@ use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookMessagePayload;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverWebhookMessageTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverWebhookMessageTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether a required keys error is generated correctly

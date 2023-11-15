@@ -26,7 +26,7 @@ use Smartwaiver\Types\SmartwaiverDynamicProcess;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverDynamicProcessTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverDynamicProcessTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether a required keys error is generated correctly

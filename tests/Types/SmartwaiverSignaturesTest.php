@@ -28,7 +28,7 @@ use Smartwaiver\Types\SmartwaiverSignatures;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverSignaturesTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverSignaturesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether a required keys error is generated correctly

@@ -25,7 +25,7 @@ use Smartwaiver\Types\SmartwaiverType;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverTypeTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test that the input array is properly accessible

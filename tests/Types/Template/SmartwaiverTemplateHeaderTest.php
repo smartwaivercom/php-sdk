@@ -24,7 +24,7 @@ use Smartwaiver\Types\Template\SmartwaiverTemplateHeader;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverTemplateHeaderTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverTemplateHeaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether no required keys error is generated
@@ -32,6 +32,7 @@ class SmartwaiverTemplateHeaderTest extends \PHPUnit_Framework_TestCase
     public function testRequiredKeysEmpty()
     {
         $header = new SmartwaiverTemplateHeader();
+        $this->assertTrue(true);
     }
 
     /**

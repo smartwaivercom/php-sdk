@@ -25,7 +25,7 @@ use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueues;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverWebhookQueuesTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverWebhookQueuesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether a required keys error is generated correctly
@@ -33,6 +33,7 @@ class SmartwaiverWebhookQueuesTest extends \PHPUnit_Framework_TestCase
     public function testRequiredKeys()
     {
         $swWebhookQueues = new SmartwaiverWebhookQueues([]);
+        $this->assertTrue(true);
     }
 
     /**
