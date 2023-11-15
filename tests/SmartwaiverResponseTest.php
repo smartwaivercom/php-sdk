@@ -31,7 +31,7 @@ use Smartwaiver\Tests\Factories\APISuccessResponses;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverResponseTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverResponseTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * API Key used for tests

@@ -25,7 +25,7 @@ use Smartwaiver\SmartwaiverRoutes;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverRoutesTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverRoutesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Base URI for all URLs

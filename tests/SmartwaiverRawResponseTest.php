@@ -25,7 +25,7 @@ use Smartwaiver\SmartwaiverRawResponse;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverRawResponseTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverRawResponseTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test that response object is properly created

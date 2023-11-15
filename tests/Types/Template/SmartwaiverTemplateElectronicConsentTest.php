@@ -24,7 +24,7 @@ use Smartwaiver\Types\Template\SmartwaiverTemplateElectronicConsent;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverTemplateElectronicConsentTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverTemplateElectronicConsentTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether no required keys error is generated
@@ -32,6 +32,7 @@ class SmartwaiverTemplateElectronicConsentTest extends \PHPUnit_Framework_TestCa
     public function testRequiredKeysEmpty()
     {
         $electronicConsent = new SmartwaiverTemplateElectronicConsent();
+        $this->assertTrue(true);
     }
 
     /**

@@ -26,7 +26,7 @@ use Smartwaiver\Types\SmartwaiverCustomField;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverCustomFieldTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverCustomFieldTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether a required keys error is generated correctly

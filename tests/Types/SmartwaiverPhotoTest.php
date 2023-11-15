@@ -26,7 +26,7 @@ use Smartwaiver\Types\SmartwaiverPhoto;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverPhotoTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverPhotoTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether a required keys error is generated correctly

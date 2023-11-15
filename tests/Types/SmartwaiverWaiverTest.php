@@ -30,7 +30,7 @@ use Smartwaiver\Types\SmartwaiverWaiver;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverWaiverTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverWaiverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test whether a required keys error is generated correctly

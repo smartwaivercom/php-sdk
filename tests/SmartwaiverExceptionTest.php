@@ -27,7 +27,7 @@ use Smartwaiver\Exceptions\SmartwaiverSDKException;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverExceptionTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverExceptionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test that an HTTP Exception allows access to all the correct information

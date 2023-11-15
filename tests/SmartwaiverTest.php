@@ -52,7 +52,7 @@ use Smartwaiver\Types\WebhookQueues\SmartwaiverWebhookQueues;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * API Key used for tests

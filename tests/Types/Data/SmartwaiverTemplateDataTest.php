@@ -26,7 +26,7 @@ use Smartwaiver\Types\Data\SmartwaiverTemplateData;
  *
  * @package Smartwaiver\Tests
  */
-class SmartwaiverTemplateDataTest extends \PHPUnit_Framework_TestCase
+class SmartwaiverTemplateDataTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test blank data object is generated properly
